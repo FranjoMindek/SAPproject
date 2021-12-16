@@ -4,5 +4,19 @@ Test123
 data <- read.csv('./vgsales.csv')
 head(data)
 ```
+Postotak zasebnih tržišta od globalnog tržišta
 
-Test123
+```{r}
+global <- sum(data$Global_Sales)
+means <- c(
+  sum(data$NA_Sales)/global,
+  sum(data$EU_Sales)/global,
+  sum(data$JP_Sales)/global,
+  sum(data$Other_Sales/global)
+)
+
+barplot(means, col = c("brown1", "blue3", "white", "chartreuse1"))
+legend("topright", fill = c("brown1", "blue3", "white", "chartreuse1"), 
+       c("NA sales", "EU sales", "JP sales", "Other sales") )
+```
+
