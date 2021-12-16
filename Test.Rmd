@@ -4,6 +4,7 @@ Test123
 data <- read.csv('./vgsales.csv')
 head(data)
 ```
+
 Postotak zasebnih tržišta od globalnog tržišta
 
 ```{r}
@@ -18,5 +19,14 @@ means <- c(
 barplot(means, col = c("brown1", "blue3", "white", "chartreuse1"))
 legend("topright", fill = c("brown1", "blue3", "white", "chartreuse1"), 
        c("NA sales", "EU sales", "JP sales", "Other sales") )
+```
+
+Prosječni profit po žanrovima za naslove iz 2015. godine ili novije.
+
+```{r}
+library(tidyverse)
+Profit = data[data$Year >= 2015,] %>% group_by(Genre) %>% summarise(MeanProfitByGenre = mean(Global_Sales))
+Profit
+barplot(Profit$MeanProfitByGenre, names.arg = Profit$Genre, las=2, cex.names = 0.8)
 ```
 
