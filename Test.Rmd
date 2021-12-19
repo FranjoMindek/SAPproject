@@ -1,32 +1,92 @@
-Test123
-
 ```{r}
 data <- read.csv('./vgsales.csv')
-head(data)
-```
-
-Postotak zasebnih tržišta od globalnog tržišta
-
-```{r}
-global <- sum(data$Global_Sales)
-means <- c(
-  sum(data$NA_Sales)/global,
-  sum(data$EU_Sales)/global,
-  sum(data$JP_Sales)/global,
-  sum(data$Other_Sales/global)
-)
-
-barplot(means, col = c("brown1", "blue3", "white", "chartreuse1"))
-legend("topright", fill = c("brown1", "blue3", "white", "chartreuse1"), 
-       c("NA sales", "EU sales", "JP sales", "Other sales") )
-```
-
-Prosječni profit po žanrovima za naslove iz 2015. godine ili novije.
-
-```{r}
 library(tidyverse)
-Profit = data[data$Year >= 2015,] %>% group_by(Genre) %>% summarise(MeanProfitByGenre = mean(Global_Sales))
-Profit
-barplot(Profit$MeanProfitByGenre, names.arg = Profit$Genre, las=2, cex.names = 0.8)
+```
+
+
+##1. Pitanje: Jesu li u Japanu RPG igre znčajno prodavanije od FPS igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
+
+#Jesu li u Japanu RPG igre značajno prodavanije od FPS igara?
+
+```{r}
+# Pogledajmo prvo podatke koje imam o Japanu prije same uspostave test
+# Za usporedbu po žanrovima koristiti ćemo udio prodaje žanra u Japanu od ukupnih prodaja u Japanu.
+
+JPGenreSales = data[c(5,9)]
+
+JapanProfitByGenre = JPGenreSales %>% group_by(Genre) %>% 
+                     summarise(PercentageOfGenreInMarket = sum(JP_Sales) / sum(JPGenreSales$JP_Sales))
+par(mar=c(5,5,3,0)) #margine
+
+barplot(JapanProfitByGenre$PercentageOfGenreInMarket, 
+        names.arg = JapanProfitByGenre$Genre, 
+        las = 2, 
+        cex.names = 0.8,
+        main = "Popularnost žanrova u Japanu",
+        ylab = "Udio prodaje žanra od ukupne prodaje u Japana")
+```
+
+Na prvi pogled izgledao kao da su RPG igre znatno dominantan žanr u Japanu. 
+No ovaj test nije dobar pokazatelj u slučaju da postoje outlieri. (npr. jedna franšiza RPG igara koja je jako popularna u Japanu može dizati prosjek prodaja iako bi samostalne RPG igre mogle biti puno manje popularnije)
+Pokušajmo također prikazati podatke pomoću drugih grafa.
+
+```{r}
+FPSData = JPGenreSales[JPGenreSales$Genre == "Shooter" & JPGenreSales$JP_Sale > 0, ]
+RPGData = JPGenreSales[JPGenreSales$Genre == "Role-Playing" & JPGenreSales$JP_Sales > 0, ]
+
+boxplot(FPSData$JP_Sales, RPGData$JP_Sales,
+        names = c("FPS sales", "RPG sales"),
+        main = "Prodaja FPS i RPG igara u Japanu")
+
+b = seq(min(JPGenreSales$JP_Sales) - 0.1,max(JPGenreSales$JP_Sales) + 0.1,0.2)
+
+h1 = hist(FPSData$JP_Sales, breaks = b, plot = FALSE)
+h2 = hist(RPGData$JP_Sales, breaks = b, plot = FALSE)
+
+RPGFPSdata <- t(cbind(h1$counts, h2$counts))
+
+barplot(RPGFPSdata, beside=TRUE, col = c("red", "green"))
+
+#Nažalost podatci sadrže ogroman broj niskoprodavanih igrica te time je svaka imalo uspješna igrica "outlier".
+#Svakako također postoje i jako uspješne outlier igrice
+#Zato ćemo iz naših podataka izbaciti najnižih i najviših 10% vrijednosti.
+
+FPSq <- quantile(FPSData$JP_Sales, probs = c(.1, .90))
+RPGq <- quantile(RPGData$JP_Sales, probs = c(.1, .90))
+
+FPSDataTrimmed = JPGenreSales[JPGenreSales$Genre == "Shooter" 
+                              & JPGenreSales$JP_Sales >= FPSq[1] & JPGenreSales$JP_Sales <= FPSq[2], ]
+RPGDataTrimmed = JPGenreSales[JPGenreSales$Genre == "Role-Playing" 
+                              & JPGenreSales$JP_Sales >= RPGq[1] & JPGenreSales$JP_Sales <= RPGq[2], ]
+
+boxplot(FPSDataTrimmed$JP_Sales, RPGDataTrimmed$JP_Sales,
+        names = c("FPS sales", "RPG sales"),
+        main = "Prodaja FPS i RPG igara u Japanu")
+
+h1Trimmed = hist(FPSDataTrimmed$JP_Sales, breaks = b, plot = FALSE)
+h2Trimmed = hist(RPGDataTrimmed$JP_Sales, breaks = b, plot = FALSE)
+
+RPGFPSdataTrimmed <- t(cbind(h1Trimmed$counts, h2Trimmed$counts))
+
+barplot(RPGFPSdataTrimmed, beside=TRUE, col = c("red", "green"))
+
+
+```
+
+Možemo uočiti nekoliko stvari:
+U Japanu se brojčano prodaje puno više RPG nego FPS igri.
+U prosjeku RPG igre su puno prodavanije od FPS igri.
+RPG igre imaju puno više jako prodavanih outliera te su oni i znatno prodavaniji od FPS outliera.
+
+#Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
+
+Prije nego krenemo na rješavanje samog pitanja moramo razriješiti problem popularnosti.
+Kako je Europsko tržište znatno veće nego Japan moramo odabrati model koji će dobro opisati "popularnost" žanrova neovisno o populaciji potrošača. 
+Model koji smo izabrali jest udio potrošača žanra od ukupnih potrošača regije, tj.:
+npr. popularnost RPG igara u Japanu odredit ćemo tako da broj prodaja RPG igara Japana podijelimo s brojem prodaje svih žanrova Japana.
+
+
+```{r}
+
 ```
 
