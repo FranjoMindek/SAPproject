@@ -3,12 +3,11 @@ data <- read.csv('./vgsales.csv')
 library(tidyverse)
 ```
 
-
 ##1. Pitanje: Jesu li u Japanu RPG igre znčajno prodavanije od FPS igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
 
 #Jesu li u Japanu RPG igre značajno prodavanije od FPS igara?
 
-```{r}
+```{r, fig.width=8}
 # Pogledajmo prvo podatke koje imam o Japanu prije same uspostave test
 # Za usporedbu po žanrovima koristiti ćemo udio prodaje žanra u Japanu od ukupnih prodaja u Japanu.
 
@@ -16,7 +15,7 @@ JPGenreSales = data[c(5,9)]
 
 JapanProfitByGenre = JPGenreSales %>% group_by(Genre) %>% 
                      summarise(PercentageOfGenreInMarket = sum(JP_Sales) / sum(JPGenreSales$JP_Sales))
-par(mar=c(5,5,3,0)) #margine
+
 
 barplot(JapanProfitByGenre$PercentageOfGenreInMarket, 
         names.arg = JapanProfitByGenre$Genre, 
@@ -26,57 +25,64 @@ barplot(JapanProfitByGenre$PercentageOfGenreInMarket,
         ylab = "Udio prodaje žanra od ukupne prodaje u Japana")
 ```
 
-Na prvi pogled izgledao kao da su RPG igre znatno dominantan žanr u Japanu. 
-No ovaj test nije dobar pokazatelj u slučaju da postoje outlieri. (npr. jedna franšiza RPG igara koja je jako popularna u Japanu može dizati prosjek prodaja iako bi samostalne RPG igre mogle biti puno manje popularnije)
-Pokušajmo također prikazati podatke pomoću drugih grafa.
+Na prvi pogled izgleda kao da su RPG igre znatno dominantan žanr u Japanu te svakako popularnije od FPS igri.
+Uvjerimo se u to prikazivanjem podataka pomoću i drugih grafova.
 
-```{r}
-FPSData = JPGenreSales[JPGenreSales$Genre == "Shooter" & JPGenreSales$JP_Sale > 0, ]
-RPGData = JPGenreSales[JPGenreSales$Genre == "Role-Playing" & JPGenreSales$JP_Sales > 0, ]
+```{r, fig.width=8}
+JP_FPSData = JPGenreSales[JPGenreSales$Genre == "Shooter" & JPGenreSales$JP_Sale > 0, ]
+JP_RPGData = JPGenreSales[JPGenreSales$Genre == "Role-Playing" & JPGenreSales$JP_Sales > 0, ]
 
-boxplot(FPSData$JP_Sales, RPGData$JP_Sales,
+
+boxplot(JP_FPSData$JP_Sales, JP_RPGData$JP_Sales,
         names = c("FPS sales", "RPG sales"),
         main = "Prodaja FPS i RPG igara u Japanu")
 
-b = seq(min(JPGenreSales$JP_Sales) - 0.1,max(JPGenreSales$JP_Sales) + 0.1,0.2)
+b = seq(min(JP_RPGData$JP_Sales) - 0.2,max(JP_RPGData$JP_Sales) + 0.2,0.2)
 
-h1 = hist(FPSData$JP_Sales, breaks = b, plot = FALSE)
-h2 = hist(RPGData$JP_Sales, breaks = b, plot = FALSE)
+h1 = hist(JP_FPSData$JP_Sales, breaks = b, plot = FALSE)
+h2 = hist(JP_RPGData$JP_Sales, breaks = b, plot = FALSE)
 
-RPGFPSdata <- t(cbind(h1$counts, h2$counts))
+JP_RPGFPSdata <- t(cbind(h1$counts, h2$counts))
 
-barplot(RPGFPSdata, beside=TRUE, col = c("red", "green"))
-
-#Nažalost podatci sadrže ogroman broj niskoprodavanih igrica te time je svaka imalo uspješna igrica "outlier".
-#Svakako također postoje i jako uspješne outlier igrice
-#Zato ćemo iz naših podataka izbaciti najnižih i najviših 10% vrijednosti.
-
-FPSq <- quantile(FPSData$JP_Sales, probs = c(.1, .90))
-RPGq <- quantile(RPGData$JP_Sales, probs = c(.1, .90))
-
-FPSDataTrimmed = JPGenreSales[JPGenreSales$Genre == "Shooter" 
-                              & JPGenreSales$JP_Sales >= FPSq[1] & JPGenreSales$JP_Sales <= FPSq[2], ]
-RPGDataTrimmed = JPGenreSales[JPGenreSales$Genre == "Role-Playing" 
-                              & JPGenreSales$JP_Sales >= RPGq[1] & JPGenreSales$JP_Sales <= RPGq[2], ]
-
-boxplot(FPSDataTrimmed$JP_Sales, RPGDataTrimmed$JP_Sales,
-        names = c("FPS sales", "RPG sales"),
+barplot(JP_RPGFPSdata, beside=TRUE, col = c("red", "green"),
         main = "Prodaja FPS i RPG igara u Japanu")
-
-h1Trimmed = hist(FPSDataTrimmed$JP_Sales, breaks = b, plot = FALSE)
-h2Trimmed = hist(RPGDataTrimmed$JP_Sales, breaks = b, plot = FALSE)
-
-RPGFPSdataTrimmed <- t(cbind(h1Trimmed$counts, h2Trimmed$counts))
-
-barplot(RPGFPSdataTrimmed, beside=TRUE, col = c("red", "green"))
-
-
+legend("topright", fill = c("red", "green"), c("FPS igre", "RPG igre"))
 ```
 
-Možemo uočiti nekoliko stvari:
-U Japanu se brojčano prodaje puno više RPG nego FPS igri.
+Nažalost podatci sadrže ogroman broj niskoprodavanih igrica te time je svaka imalo uspješna igrica "outlier".
+Posljedica je jako nečitljiv box-and-whisker graf i gotovo nevidljivi outlieri na bar grafu.
+Zato ćemo iz naših podataka izbaciti najnižih i najviših 10% vrijednosti.
+
+```{r, fig.width=8}
+JP_FPSq <- quantile(JP_FPSData$JP_Sales, probs = c(.1, .90))
+JP_RPGq <- quantile(JP_RPGData$JP_Sales, probs = c(.1, .90))
+
+JP_FPSDataTrimmed = JPGenreSales[JPGenreSales$Genre == "Shooter" 
+                              & JPGenreSales$JP_Sales >= JP_FPSq[1] & JPGenreSales$JP_Sales <= JP_FPSq[2], ]
+JP_RPGDataTrimmed = JPGenreSales[JPGenreSales$Genre == "Role-Playing" 
+                              & JPGenreSales$JP_Sales >= JP_RPGq[1] & JPGenreSales$JP_Sales <= JP_RPGq[2], ]
+
+bTrimmed = seq(min(JP_RPGDataTrimmed$JP_Sales) - 0.05,max(JP_RPGDataTrimmed$JP_Sales) + 0.05,0.05)
+
+boxplot(JP_FPSDataTrimmed$JP_Sales, JP_RPGDataTrimmed$JP_Sales,
+        names = c("FPS sales", "RPG sales"),
+        main = "Prodaja FPS i RPG igara u Japanu")
+
+h1Trimmed = hist(JP_FPSDataTrimmed$JP_Sales, breaks = bTrimmed, plot = FALSE)
+h2Trimmed = hist(JP_RPGDataTrimmed$JP_Sales, breaks = bTrimmed, plot = FALSE)
+
+JP_RPGFPSdataTrimmed <- t(cbind(h1Trimmed$counts, h2Trimmed$counts))
+
+barplot(JP_RPGFPSdataTrimmed, beside=TRUE, col = c("red", "green"),
+        main = "Prodaja FPS i RPG igara u Japanu",)
+legend("topright", fill = c("red", "green"), c("FPS igre", "RPG igre"))
+```
+
+Iz novih grafova možemo uočiti nekoliko stvari:
+U Japanu se izlazi puno više novih RPG nego FPS igri.
 U prosjeku RPG igre su puno prodavanije od FPS igri.
 RPG igre imaju puno više jako prodavanih outliera te su oni i znatno prodavaniji od FPS outliera.
+Možemo zaključiti da su RPG igre popularnije od FPS igri u Japanu.
 
 #Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
 
@@ -85,8 +91,60 @@ Kako je Europsko tržište znatno veće nego Japan moramo odabrati model koji ć
 Model koji smo izabrali jest udio potrošača žanra od ukupnih potrošača regije, tj.:
 npr. popularnost RPG igara u Japanu odredit ćemo tako da broj prodaja RPG igara Japana podijelimo s brojem prodaje svih žanrova Japana.
 
+```{r, fig.width=8}
+#Prikažimo prvo podatke grafički bar grafovima
+
+EUGenreSales = data[c(5,8)]
+
+EuropeProfitByGenre = EUGenreSales %>% group_by(Genre) %>% 
+                     summarise(PercentageOfGenreInMarket = sum(EU_Sales) / sum(EUGenreSales$EU_Sales))
+
+par(mfrow=c(1,2))
+
+barplot(EuropeProfitByGenre$PercentageOfGenreInMarket, 
+        names.arg = EuropeProfitByGenre$Genre, 
+        las = 2, 
+        cex.names = 0.8,
+        main = "Popularnost žanrova u Europi",
+        ylab = "Udio prodaje žanra od ukupne prodaje u Europi")
+
+barplot(JapanProfitByGenre$PercentageOfGenreInMarket, 
+        names.arg = JapanProfitByGenre$Genre, 
+        las = 2, 
+        cex.names = 0.8,
+        main = "Popularnost žanrova u Japanu",
+        ylab = "Udio prodaje žanra od ukupne prodaje u Japana")
+```
+
+Možemo uočiti nekoliko žanrova koji su popularniji u Europi nego u Japanu prema izabranom modelu.
+To su žanrovi: Action, Racing, Shooter, Sports.
+Prikažimo dodatne grafove za žanr Shooter.
 
 ```{r}
+#Odmah ćemo koristiti srezane podatke
+EU_FPSData = EUGenreSales[EUGenreSales$Genre == "Shooter" & EUGenreSales$EU_Sales > 0, ]
 
+EU_FPSq <- quantile(EU_FPSDataNonTrimmed$EU_Sales, probs = c(.1, .90))
+
+EU_FPSDataTrimmed = EUGenreSales[EUGenreSales$Genre == "Shooter" 
+                        & EUGenreSales$EU_Sales >= EU_FPSq[1] & EUGenreSales$EU_Sales <= EU_FPSq[2], ]
+
+boxplot(EU_FPSDataTrimmed$EU_Sales, JP_FPSDataTrimmed$JP_Sales,
+        names = c("EU FPS sales", "Japan RPG sales"),
+        main = "Prodaja FPS igri u EU i Japanu")
+
+bJPvEU = seq(min(JP_FPSData$JP_Sales) - 0.05,max(JP_FPSData$JP_Sales)-0.6,0.05)
+
+h1 = hist(JP_FPSDataTrimmed$JP_Sales, breaks = bJPvEU, plot = FALSE)
+h2 = hist(EU_FPSDataTrimmed$EU_Sales, breaks = bJPvEU, plot = FALSE)
+
+JPEU_FPSdataTrimmed <- t(cbind(h1$counts, h2$counts))
+
+barplot(JPEU_FPSdataTrimmed, beside=TRUE, col = c("red", "green"),
+        main = "Prodaja FPS i RPG igara u Japanu")
+legend("topright", fill = c("red", "green"), c("FPS igre", "RPG igre"))
 ```
+
+Iz navedenih grafova možemo se uvjeriti da su FPS igre popularnije u Europi nego Japanu i po broju naslova i po prodajama.
+
 
