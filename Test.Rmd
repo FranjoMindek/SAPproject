@@ -124,7 +124,7 @@ Prikažimo dodatne grafove za žanr Shooter.
 #Odmah ćemo koristiti srezane podatke
 EU_FPSData = EUGenreSales[EUGenreSales$Genre == "Shooter" & EUGenreSales$EU_Sales > 0, ]
 
-EU_FPSq <- quantile(EU_FPSDataNonTrimmed$EU_Sales, probs = c(.1, .90))
+EU_FPSq <- quantile(EU_FPSData$EU_Sales, probs = c(.1, .90))
 
 EU_FPSDataTrimmed = EUGenreSales[EUGenreSales$Genre == "Shooter" 
                         & EUGenreSales$EU_Sales >= EU_FPSq[1] & EUGenreSales$EU_Sales <= EU_FPSq[2], ]
