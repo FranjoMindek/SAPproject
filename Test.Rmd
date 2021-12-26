@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 ```{r}
 data <- read.csv('./vgsales.csv')
 library(tidyverse)
@@ -148,3 +153,23 @@ legend("topright", fill = c("red", "green"), c("FPS igre", "RPG igre"))
 Iz navedenih grafova možemo se uvjeriti da su FPS igre popularnije u Europi nego Japanu i po broju naslova i po prodajama.
 
 
+##2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki žanrovi značajno popularniji?
+
+```{r}
+# Gledamo prvo podatke koje imam o Sjevernoj Americi prije testa
+# Za usporedbu po žanrovima koristiti ćemo udio prodaje žanrova u Americi od ukupne prodaje u Americi.
+
+NAGenreSales = data[c(5,7)]
+NAProfitByGenre = NAGenreSales %>% group_by(Genre) %>% 
+                     summarise(PercentageOfGenreInMarket = sum(NA_Sales) / sum(NAGenreSales$NA_Sales))
+barplot(NAProfitByGenre$PercentageOfGenreInMarket, 
+        names.arg = NAProfitByGenre$Genre, 
+        las = 2, 
+        cex.names = 0.8,
+        main = "Popularnost žanrova u Americi",
+        ylab = "Udio prodaje žanra od ukupne prodaje u Sjevernoj Americi")
+
+```
+
+Odokativno vidimo da su prodavaniji žanrovi Action, Shooter i Sports, te da se žanrovi Strategy,
+Adventure i Puzzle slabije prodaju.

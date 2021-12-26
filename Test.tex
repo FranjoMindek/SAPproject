@@ -1,0 +1,385 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\author{}
+\date{\vspace{-2.5em}}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}./vgsales.csv\textquotesingle{}}\NormalTok{)}
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: package 'tidyverse' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
+\end{verbatim}
+
+\begin{verbatim}
+## v ggplot2 3.3.5     v purrr   0.3.4
+## v tibble  3.1.6     v dplyr   1.0.7
+## v tidyr   1.1.4     v stringr 1.4.0
+## v readr   2.1.1     v forcats 0.5.1
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'ggplot2' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'tibble' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'tidyr' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'readr' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'purrr' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'dplyr' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'stringr' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## Warning: package 'forcats' was built under R version 4.1.2
+\end{verbatim}
+
+\begin{verbatim}
+## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()
+\end{verbatim}
+
+\#\#1. Pitanje: Jesu li u Japanu RPG igre znčajno prodavanije od FPS
+igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi
+nego u Japanu?
+
+\#Jesu li u Japanu RPG igre značajno prodavanije od FPS igara?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Pogledajmo prvo podatke koje imam o Japanu prije same uspostave test}
+\CommentTok{\# Za usporedbu po žanrovima koristiti ćemo udio prodaje žanra u Japanu od ukupnih prodaja u Japanu.}
+
+\NormalTok{JPGenreSales }\OtherTok{=}\NormalTok{ data[}\FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{9}\NormalTok{)]}
+
+\NormalTok{JapanProfitByGenre }\OtherTok{=}\NormalTok{ JPGenreSales }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Genre) }\SpecialCharTok{\%\textgreater{}\%} 
+                     \FunctionTok{summarise}\NormalTok{(}\AttributeTok{PercentageOfGenreInMarket =} \FunctionTok{sum}\NormalTok{(JP\_Sales) }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(JPGenreSales}\SpecialCharTok{$}\NormalTok{JP\_Sales))}
+
+
+\FunctionTok{barplot}\NormalTok{(JapanProfitByGenre}\SpecialCharTok{$}\NormalTok{PercentageOfGenreInMarket, }
+        \AttributeTok{names.arg =}\NormalTok{ JapanProfitByGenre}\SpecialCharTok{$}\NormalTok{Genre, }
+        \AttributeTok{las =} \DecValTok{2}\NormalTok{, }
+        \AttributeTok{cex.names =} \FloatTok{0.8}\NormalTok{,}
+        \AttributeTok{main =} \StringTok{"Popularnost žanrova u Japanu"}\NormalTok{,}
+        \AttributeTok{ylab =} \StringTok{"Udio prodaje žanra od ukupne prodaje u Japana"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+Na prvi pogled izgleda kao da su RPG igre znatno dominantan žanr u
+Japanu te svakako popularnije od FPS igri. Uvjerimo se u to
+prikazivanjem podataka pomoću i drugih grafova.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{JP\_FPSData }\OtherTok{=}\NormalTok{ JPGenreSales[JPGenreSales}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Shooter"} \SpecialCharTok{\&}\NormalTok{ JPGenreSales}\SpecialCharTok{$}\NormalTok{JP\_Sale }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, ]}
+\NormalTok{JP\_RPGData }\OtherTok{=}\NormalTok{ JPGenreSales[JPGenreSales}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Role{-}Playing"} \SpecialCharTok{\&}\NormalTok{ JPGenreSales}\SpecialCharTok{$}\NormalTok{JP\_Sales }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, ]}
+
+
+\FunctionTok{boxplot}\NormalTok{(JP\_FPSData}\SpecialCharTok{$}\NormalTok{JP\_Sales, JP\_RPGData}\SpecialCharTok{$}\NormalTok{JP\_Sales,}
+        \AttributeTok{names =} \FunctionTok{c}\NormalTok{(}\StringTok{"FPS sales"}\NormalTok{, }\StringTok{"RPG sales"}\NormalTok{),}
+        \AttributeTok{main =} \StringTok{"Prodaja FPS i RPG igara u Japanu"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{b }\OtherTok{=} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(JP\_RPGData}\SpecialCharTok{$}\NormalTok{JP\_Sales) }\SpecialCharTok{{-}} \FloatTok{0.2}\NormalTok{,}\FunctionTok{max}\NormalTok{(JP\_RPGData}\SpecialCharTok{$}\NormalTok{JP\_Sales) }\SpecialCharTok{+} \FloatTok{0.2}\NormalTok{,}\FloatTok{0.2}\NormalTok{)}
+
+\NormalTok{h1 }\OtherTok{=} \FunctionTok{hist}\NormalTok{(JP\_FPSData}\SpecialCharTok{$}\NormalTok{JP\_Sales, }\AttributeTok{breaks =}\NormalTok{ b, }\AttributeTok{plot =} \ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{h2 }\OtherTok{=} \FunctionTok{hist}\NormalTok{(JP\_RPGData}\SpecialCharTok{$}\NormalTok{JP\_Sales, }\AttributeTok{breaks =}\NormalTok{ b, }\AttributeTok{plot =} \ConstantTok{FALSE}\NormalTok{)}
+
+\NormalTok{JP\_RPGFPSdata }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(}\FunctionTok{cbind}\NormalTok{(h1}\SpecialCharTok{$}\NormalTok{counts, h2}\SpecialCharTok{$}\NormalTok{counts))}
+
+\FunctionTok{barplot}\NormalTok{(JP\_RPGFPSdata, }\AttributeTok{beside=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"green"}\NormalTok{),}
+        \AttributeTok{main =} \StringTok{"Prodaja FPS i RPG igara u Japanu"}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"topright"}\NormalTok{, }\AttributeTok{fill =} \FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"green"}\NormalTok{), }\FunctionTok{c}\NormalTok{(}\StringTok{"FPS igre"}\NormalTok{, }\StringTok{"RPG igre"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-3-2.pdf}
+
+Nažalost podatci sadrže ogroman broj niskoprodavanih igrica te time je
+svaka imalo uspješna igrica ``outlier''. Posljedica je jako nečitljiv
+box-and-whisker graf i gotovo nevidljivi outlieri na bar grafu. Zato
+ćemo iz naših podataka izbaciti najnižih i najviših 10\% vrijednosti.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{JP\_FPSq }\OtherTok{\textless{}{-}} \FunctionTok{quantile}\NormalTok{(JP\_FPSData}\SpecialCharTok{$}\NormalTok{JP\_Sales, }\AttributeTok{probs =} \FunctionTok{c}\NormalTok{(.}\DecValTok{1}\NormalTok{, .}\DecValTok{90}\NormalTok{))}
+\NormalTok{JP\_RPGq }\OtherTok{\textless{}{-}} \FunctionTok{quantile}\NormalTok{(JP\_RPGData}\SpecialCharTok{$}\NormalTok{JP\_Sales, }\AttributeTok{probs =} \FunctionTok{c}\NormalTok{(.}\DecValTok{1}\NormalTok{, .}\DecValTok{90}\NormalTok{))}
+
+\NormalTok{JP\_FPSDataTrimmed }\OtherTok{=}\NormalTok{ JPGenreSales[JPGenreSales}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Shooter"} 
+                              \SpecialCharTok{\&}\NormalTok{ JPGenreSales}\SpecialCharTok{$}\NormalTok{JP\_Sales }\SpecialCharTok{\textgreater{}=}\NormalTok{ JP\_FPSq[}\DecValTok{1}\NormalTok{] }\SpecialCharTok{\&}\NormalTok{ JPGenreSales}\SpecialCharTok{$}\NormalTok{JP\_Sales }\SpecialCharTok{\textless{}=}\NormalTok{ JP\_FPSq[}\DecValTok{2}\NormalTok{], ]}
+\NormalTok{JP\_RPGDataTrimmed }\OtherTok{=}\NormalTok{ JPGenreSales[JPGenreSales}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Role{-}Playing"} 
+                              \SpecialCharTok{\&}\NormalTok{ JPGenreSales}\SpecialCharTok{$}\NormalTok{JP\_Sales }\SpecialCharTok{\textgreater{}=}\NormalTok{ JP\_RPGq[}\DecValTok{1}\NormalTok{] }\SpecialCharTok{\&}\NormalTok{ JPGenreSales}\SpecialCharTok{$}\NormalTok{JP\_Sales }\SpecialCharTok{\textless{}=}\NormalTok{ JP\_RPGq[}\DecValTok{2}\NormalTok{], ]}
+
+\NormalTok{bTrimmed }\OtherTok{=} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(JP\_RPGDataTrimmed}\SpecialCharTok{$}\NormalTok{JP\_Sales) }\SpecialCharTok{{-}} \FloatTok{0.05}\NormalTok{,}\FunctionTok{max}\NormalTok{(JP\_RPGDataTrimmed}\SpecialCharTok{$}\NormalTok{JP\_Sales) }\SpecialCharTok{+} \FloatTok{0.05}\NormalTok{,}\FloatTok{0.05}\NormalTok{)}
+
+\FunctionTok{boxplot}\NormalTok{(JP\_FPSDataTrimmed}\SpecialCharTok{$}\NormalTok{JP\_Sales, JP\_RPGDataTrimmed}\SpecialCharTok{$}\NormalTok{JP\_Sales,}
+        \AttributeTok{names =} \FunctionTok{c}\NormalTok{(}\StringTok{"FPS sales"}\NormalTok{, }\StringTok{"RPG sales"}\NormalTok{),}
+        \AttributeTok{main =} \StringTok{"Prodaja FPS i RPG igara u Japanu"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{h1Trimmed }\OtherTok{=} \FunctionTok{hist}\NormalTok{(JP\_FPSDataTrimmed}\SpecialCharTok{$}\NormalTok{JP\_Sales, }\AttributeTok{breaks =}\NormalTok{ bTrimmed, }\AttributeTok{plot =} \ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{h2Trimmed }\OtherTok{=} \FunctionTok{hist}\NormalTok{(JP\_RPGDataTrimmed}\SpecialCharTok{$}\NormalTok{JP\_Sales, }\AttributeTok{breaks =}\NormalTok{ bTrimmed, }\AttributeTok{plot =} \ConstantTok{FALSE}\NormalTok{)}
+
+\NormalTok{JP\_RPGFPSdataTrimmed }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(}\FunctionTok{cbind}\NormalTok{(h1Trimmed}\SpecialCharTok{$}\NormalTok{counts, h2Trimmed}\SpecialCharTok{$}\NormalTok{counts))}
+
+\FunctionTok{barplot}\NormalTok{(JP\_RPGFPSdataTrimmed, }\AttributeTok{beside=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"green"}\NormalTok{),}
+        \AttributeTok{main =} \StringTok{"Prodaja FPS i RPG igara u Japanu"}\NormalTok{,)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"topright"}\NormalTok{, }\AttributeTok{fill =} \FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"green"}\NormalTok{), }\FunctionTok{c}\NormalTok{(}\StringTok{"FPS igre"}\NormalTok{, }\StringTok{"RPG igre"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-4-2.pdf}
+
+Iz novih grafova možemo uočiti nekoliko stvari: U Japanu se izlazi puno
+više novih RPG nego FPS igri. U prosjeku RPG igre su puno prodavanije od
+FPS igri. RPG igre imaju puno više jako prodavanih outliera te su oni i
+znatno prodavaniji od FPS outliera. Možemo zaključiti da su RPG igre
+popularnije od FPS igri u Japanu.
+
+\#Možete li pronaći neki žanr koji je značajno popularniji u Europi nego
+u Japanu?
+
+Prije nego krenemo na rješavanje samog pitanja moramo razriješiti
+problem popularnosti. Kako je Europsko tržište znatno veće nego Japan
+moramo odabrati model koji će dobro opisati ``popularnost'' žanrova
+neovisno o populaciji potrošača. Model koji smo izabrali jest udio
+potrošača žanra od ukupnih potrošača regije, tj.: npr. popularnost RPG
+igara u Japanu odredit ćemo tako da broj prodaja RPG igara Japana
+podijelimo s brojem prodaje svih žanrova Japana.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Prikažimo prvo podatke grafički bar grafovima}
+
+\NormalTok{EUGenreSales }\OtherTok{=}\NormalTok{ data[}\FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{8}\NormalTok{)]}
+
+\NormalTok{EuropeProfitByGenre }\OtherTok{=}\NormalTok{ EUGenreSales }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Genre) }\SpecialCharTok{\%\textgreater{}\%} 
+                     \FunctionTok{summarise}\NormalTok{(}\AttributeTok{PercentageOfGenreInMarket =} \FunctionTok{sum}\NormalTok{(EU\_Sales) }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(EUGenreSales}\SpecialCharTok{$}\NormalTok{EU\_Sales))}
+
+\FunctionTok{par}\NormalTok{(}\AttributeTok{mfrow=}\FunctionTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{))}
+
+\FunctionTok{barplot}\NormalTok{(EuropeProfitByGenre}\SpecialCharTok{$}\NormalTok{PercentageOfGenreInMarket, }
+        \AttributeTok{names.arg =}\NormalTok{ EuropeProfitByGenre}\SpecialCharTok{$}\NormalTok{Genre, }
+        \AttributeTok{las =} \DecValTok{2}\NormalTok{, }
+        \AttributeTok{cex.names =} \FloatTok{0.8}\NormalTok{,}
+        \AttributeTok{main =} \StringTok{"Popularnost žanrova u Europi"}\NormalTok{,}
+        \AttributeTok{ylab =} \StringTok{"Udio prodaje žanra od ukupne prodaje u Europi"}\NormalTok{)}
+
+\FunctionTok{barplot}\NormalTok{(JapanProfitByGenre}\SpecialCharTok{$}\NormalTok{PercentageOfGenreInMarket, }
+        \AttributeTok{names.arg =}\NormalTok{ JapanProfitByGenre}\SpecialCharTok{$}\NormalTok{Genre, }
+        \AttributeTok{las =} \DecValTok{2}\NormalTok{, }
+        \AttributeTok{cex.names =} \FloatTok{0.8}\NormalTok{,}
+        \AttributeTok{main =} \StringTok{"Popularnost žanrova u Japanu"}\NormalTok{,}
+        \AttributeTok{ylab =} \StringTok{"Udio prodaje žanra od ukupne prodaje u Japana"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+Možemo uočiti nekoliko žanrova koji su popularniji u Europi nego u
+Japanu prema izabranom modelu. To su žanrovi: Action, Racing, Shooter,
+Sports. Prikažimo dodatne grafove za žanr Shooter.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Odmah ćemo koristiti srezane podatke}
+\NormalTok{EU\_FPSData }\OtherTok{=}\NormalTok{ EUGenreSales[EUGenreSales}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Shooter"} \SpecialCharTok{\&}\NormalTok{ EUGenreSales}\SpecialCharTok{$}\NormalTok{EU\_Sales }\SpecialCharTok{\textgreater{}} \DecValTok{0}\NormalTok{, ]}
+
+\NormalTok{EU\_FPSq }\OtherTok{\textless{}{-}} \FunctionTok{quantile}\NormalTok{(EU\_FPSData}\SpecialCharTok{$}\NormalTok{EU\_Sales, }\AttributeTok{probs =} \FunctionTok{c}\NormalTok{(.}\DecValTok{1}\NormalTok{, .}\DecValTok{90}\NormalTok{))}
+
+\NormalTok{EU\_FPSDataTrimmed }\OtherTok{=}\NormalTok{ EUGenreSales[EUGenreSales}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Shooter"} 
+                        \SpecialCharTok{\&}\NormalTok{ EUGenreSales}\SpecialCharTok{$}\NormalTok{EU\_Sales }\SpecialCharTok{\textgreater{}=}\NormalTok{ EU\_FPSq[}\DecValTok{1}\NormalTok{] }\SpecialCharTok{\&}\NormalTok{ EUGenreSales}\SpecialCharTok{$}\NormalTok{EU\_Sales }\SpecialCharTok{\textless{}=}\NormalTok{ EU\_FPSq[}\DecValTok{2}\NormalTok{], ]}
+
+\FunctionTok{boxplot}\NormalTok{(EU\_FPSDataTrimmed}\SpecialCharTok{$}\NormalTok{EU\_Sales, JP\_FPSDataTrimmed}\SpecialCharTok{$}\NormalTok{JP\_Sales,}
+        \AttributeTok{names =} \FunctionTok{c}\NormalTok{(}\StringTok{"EU FPS sales"}\NormalTok{, }\StringTok{"Japan RPG sales"}\NormalTok{),}
+        \AttributeTok{main =} \StringTok{"Prodaja FPS igri u EU i Japanu"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{bJPvEU }\OtherTok{=} \FunctionTok{seq}\NormalTok{(}\FunctionTok{min}\NormalTok{(JP\_FPSData}\SpecialCharTok{$}\NormalTok{JP\_Sales) }\SpecialCharTok{{-}} \FloatTok{0.05}\NormalTok{,}\FunctionTok{max}\NormalTok{(JP\_FPSData}\SpecialCharTok{$}\NormalTok{JP\_Sales)}\SpecialCharTok{{-}}\FloatTok{0.6}\NormalTok{,}\FloatTok{0.05}\NormalTok{)}
+
+\NormalTok{h1 }\OtherTok{=} \FunctionTok{hist}\NormalTok{(JP\_FPSDataTrimmed}\SpecialCharTok{$}\NormalTok{JP\_Sales, }\AttributeTok{breaks =}\NormalTok{ bJPvEU, }\AttributeTok{plot =} \ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{h2 }\OtherTok{=} \FunctionTok{hist}\NormalTok{(EU\_FPSDataTrimmed}\SpecialCharTok{$}\NormalTok{EU\_Sales, }\AttributeTok{breaks =}\NormalTok{ bJPvEU, }\AttributeTok{plot =} \ConstantTok{FALSE}\NormalTok{)}
+
+\NormalTok{JPEU\_FPSdataTrimmed }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(}\FunctionTok{cbind}\NormalTok{(h1}\SpecialCharTok{$}\NormalTok{counts, h2}\SpecialCharTok{$}\NormalTok{counts))}
+
+\FunctionTok{barplot}\NormalTok{(JPEU\_FPSdataTrimmed, }\AttributeTok{beside=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"green"}\NormalTok{),}
+        \AttributeTok{main =} \StringTok{"Prodaja FPS i RPG igara u Japanu"}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"topright"}\NormalTok{, }\AttributeTok{fill =} \FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"green"}\NormalTok{), }\FunctionTok{c}\NormalTok{(}\StringTok{"FPS igre"}\NormalTok{, }\StringTok{"RPG igre"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-6-2.pdf}
+
+Iz navedenih grafova možemo se uvjeriti da su FPS igre popularnije u
+Europi nego Japanu i po broju naslova i po prodajama.
+
+\#\#2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki
+žanrovi značajno popularniji?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Gledamo prvo podatke koje imam o Sjevernoj Americi prije testa}
+\CommentTok{\# Za usporedbu po žanrovima koristiti ćemo udio prodaje žanrova u Americi od ukupne prodaje u Americi.}
+
+\NormalTok{NAGenreSales }\OtherTok{=}\NormalTok{ data[}\FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{7}\NormalTok{)]}
+\NormalTok{NAProfitByGenre }\OtherTok{=}\NormalTok{ NAGenreSales }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Genre) }\SpecialCharTok{\%\textgreater{}\%} 
+                     \FunctionTok{summarise}\NormalTok{(}\AttributeTok{PercentageOfGenreInMarket =} \FunctionTok{sum}\NormalTok{(NA\_Sales) }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(NAGenreSales}\SpecialCharTok{$}\NormalTok{NA\_Sales))}
+\FunctionTok{barplot}\NormalTok{(NAProfitByGenre}\SpecialCharTok{$}\NormalTok{PercentageOfGenreInMarket, }
+        \AttributeTok{names.arg =}\NormalTok{ NAProfitByGenre}\SpecialCharTok{$}\NormalTok{Genre, }
+        \AttributeTok{las =} \DecValTok{2}\NormalTok{, }
+        \AttributeTok{cex.names =} \FloatTok{0.8}\NormalTok{,}
+        \AttributeTok{main =} \StringTok{"Popularnost žanrova u Americi"}\NormalTok{,}
+        \AttributeTok{ylab =} \StringTok{"Udio prodaje žanra od ukupne prodaje u Sjevernoj Americi"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-7-1.pdf}
+
+Odokativno vidimo da su prodavaniji žanrovi Action, Shooter i Sports, te
+da se žanrovi Strategy, Adventure i Puzzle slabije prodaju.
+
+\end{document}
