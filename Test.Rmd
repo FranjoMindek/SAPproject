@@ -3,17 +3,20 @@ output:
   pdf_document: default
   html_document: default
 ---
+
+Ovdje neki uvod i razrada null vrijednosti ako napravimo
+
 ```{r}
 data <- read.csv('./vgsales.csv')
 library(tidyverse)
 ```
 
-##1. Pitanje: Jesu li u Japanu RPG igre znčajno prodavanije od FPS igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
+##1. Pitanje: Jesu li u Japanu RPG igre značajno prodavanije od FPS igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
 
 #Jesu li u Japanu RPG igre značajno prodavanije od FPS igara?
 
 ```{r, fig.width=8}
-# Pogledajmo prvo podatke koje imam o Japanu prije same uspostave test
+# Pogledajmo prvo podatke koje imam o Japanu prije same uspostave testa
 # Za usporedbu po žanrovima koristiti ćemo udio prodaje žanra u Japanu od ukupnih prodaja u Japanu.
 
 JPGenreSales = data[c(5,9)]
@@ -31,7 +34,7 @@ barplot(JapanProfitByGenre$PercentageOfGenreInMarket,
 ```
 
 Na prvi pogled izgleda kao da su RPG igre znatno dominantan žanr u Japanu te svakako popularnije od FPS igri.
-Uvjerimo se u to prikazivanjem podataka pomoću i drugih grafova.
+Uvjerimo se u to prikazivanjem podataka pomoću dodatnih grafova te zatim provjerimo t-testom.
 
 ```{r, fig.width=8}
 JP_FPSData = JPGenreSales[JPGenreSales$Genre == "Shooter" & JPGenreSales$JP_Sale > 0, ]
@@ -83,17 +86,38 @@ barplot(JP_RPGFPSdataTrimmed, beside=TRUE, col = c("red", "green"),
 legend("topright", fill = c("red", "green"), c("FPS igre", "RPG igre"))
 ```
 
-Iz novih grafova možemo uočiti nekoliko stvari:
-U Japanu se izlazi puno više novih RPG nego FPS igri.
-U prosjeku RPG igre su puno prodavanije od FPS igri.
-RPG igre imaju puno više jako prodavanih outliera te su oni i znatno prodavaniji od FPS outliera.
-Možemo zaključiti da su RPG igre popularnije od FPS igri u Japanu.
+Iz novih grafova možemo pretpostaviti nekoliko stvari:
+U Japanu izlazi puno više novih RPG nego FPS igri.
+U prosjeku RPG igre se prodaju više od FPS igri.
+RPG igre imaju puno više jako uspješnih outliera te su oni i znatno uspješniji od FPS outliera.
+Potvrdimo sada pretpostavku popularnosti t-testom.
+
+```{r}
+#Postavimo t-test na sljedeći način:
+#H0 - d = 0 -- srednje vrijednosti prodaje RPG i FPS igri su jednake
+#H1 - d > 0 -- srednje vrijednosti prodaje RPG i FPS igri nisu jednake 
+#također koristiti ćemo alfa=0.01 da bismo dobili 99% interval povjerenja
+#pretpostavljamo različite varijance prodaje igri unutar žanrova
+
+t.test(JP_RPGData$JP_Sales, JP_FPSData$JP_Sales, 
+       alternative="greater",
+       paired=FALSE,
+       var.equal=FALSE,
+       conf.level=0.99)
+
+qt(p=0.01, df=1301, lower.tail=FALSE)
+qt(p=0.00001, df=1301, lower.tail=FALSE) #t-vrijednost potrebna za odbacivanje na 99.999% intervalu povjerenja
+```
+Iz rezultata možemo zaključiti sljedeće:
+Na temelju jako male p-vrijednost znamo da je ovo jako ekstreman slučaj tj. jako je mala šansa ovakvog uzorka u slučaju H0. P-vrijednost podupire hipotezu H1.
+Na temelju jako velike t-vrijednosti koja se nalazi daleko iznad kritične vrijednosti odbacivanja možemo odbaciti H0 u korist H1.
+Zaključujemo da su RPG igre prodavanije od FPS igri.
 
 #Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
 
 Prije nego krenemo na rješavanje samog pitanja moramo razriješiti problem popularnosti.
 Kako je Europsko tržište znatno veće nego Japan moramo odabrati model koji će dobro opisati "popularnost" žanrova neovisno o populaciji potrošača. 
-Model koji smo izabrali jest udio potrošača žanra od ukupnih potrošača regije, tj.:
+Model koji smo izabrali za grafički prikaz problema jest udio potrošača žanra od ukupnih potrošača regije.
 npr. popularnost RPG igara u Japanu odredit ćemo tako da broj prodaja RPG igara Japana podijelimo s brojem prodaje svih žanrova Japana.
 
 ```{r, fig.width=8}
@@ -121,9 +145,9 @@ barplot(JapanProfitByGenre$PercentageOfGenreInMarket,
         ylab = "Udio prodaje žanra od ukupne prodaje u Japana")
 ```
 
-Možemo uočiti nekoliko žanrova koji su popularniji u Europi nego u Japanu prema izabranom modelu.
+Možemo uočiti nekoliko žanrova za koje možemo pretpostaviti da su popularniji u Europi nego u Japanu prema izabranom modelu.
 To su žanrovi: Action, Racing, Shooter, Sports.
-Prikažimo dodatne grafove za žanr Shooter.
+Prikažimo dodatne pomoćne grafove za žanr Shooter.
 
 ```{r}
 #Odmah ćemo koristiti srezane podatke
@@ -135,7 +159,7 @@ EU_FPSDataTrimmed = EUGenreSales[EUGenreSales$Genre == "Shooter"
                         & EUGenreSales$EU_Sales >= EU_FPSq[1] & EUGenreSales$EU_Sales <= EU_FPSq[2], ]
 
 boxplot(EU_FPSDataTrimmed$EU_Sales, JP_FPSDataTrimmed$JP_Sales,
-        names = c("EU FPS sales", "Japan RPG sales"),
+        names = c("EU FPS sales", "Japan FPS sales"),
         main = "Prodaja FPS igri u EU i Japanu")
 
 bJPvEU = seq(min(JP_FPSData$JP_Sales) - 0.05,max(JP_FPSData$JP_Sales)-0.6,0.05)
@@ -146,11 +170,37 @@ h2 = hist(EU_FPSDataTrimmed$EU_Sales, breaks = bJPvEU, plot = FALSE)
 JPEU_FPSdataTrimmed <- t(cbind(h1$counts, h2$counts))
 
 barplot(JPEU_FPSdataTrimmed, beside=TRUE, col = c("red", "green"),
-        main = "Prodaja FPS i RPG igara u Japanu")
-legend("topright", fill = c("red", "green"), c("FPS igre", "RPG igre"))
+        main = "Prodaja FPS igri u EU i Japanu")
+legend("topright", fill = c("red", "green"), c("FPS prodaja u Japanu", "FPS prodaja u EU"))
 ```
 
-Iz navedenih grafova možemo se uvjeriti da su FPS igre popularnije u Europi nego Japanu i po broju naslova i po prodajama.
+Prikazani grafovi potvrđuju da su FPS igre popularnije u Europi nego Japanu i po broju naslova i po prodajama. No potvrdimo to t-testom. 
+
+```{r}
+#Kako bismo dobili podatke koji bolje prikazuju popularnost unutar same regije, vrijednosti prodaje FPS igara unutar regije podijelit ćemo s prosječnim brojem prodaje igara unutar te regije
+
+NonBisaedEUFPSData = EU_FPSData$EU_Sales / mean(data$EU_Sales)
+NonBiasedJPFPSDATA = JP_FPSData$JP_Sales / mean(data$JP_Sales)
+
+#Postavimo t-test na sljedeći način:
+#H0 - d = 0 -- srednje vrijednosti prodaje FPS igri unutar EU i Japana su jednake
+#H1 - d > 0 -- srednje vrijednosti prodaje FPS igri unutar EU i Japana nisu jednake 
+#također koristiti ćemo alfa=0.01 da bismo dobili 99% interval povjerenja
+#pretpostavljamo različite varijance prodaje igri unutar žanrova
+
+t.test(NonBisaedEUFPSData, NonBiasedJPFPSDATA, 
+       alternative="greater",
+       paired=FALSE,
+       var.equal=FALSE,
+       conf.level=0.99)
+
+qt(p=0.0001, df=1301, lower.tail=FALSE)
+qt(p=0.00001, df=1301, lower.tail=FALSE) #t-vrijednost potrebna za odbacivanje na 99.999% intervalu povjerenja
+```
+Iz rezultata možemo zaključiti sljedeće:
+Na temelju jako male p-vrijednost znamo da je ovo jako ekstreman slučaj tj. jako je mala šansa ovakvog uzorka u slučaju H0. P-vrijednost podupire hipotezu H1.
+Na temelju jako velike t-vrijednosti (nalazi se između intervala povjerenja 99.99% i 99.999%) koja se nalazi iznad kritične vrijednosti odbacivanja možemo odbaciti H0 u korist H1.
+Zaključujemo da su FPS igre prodavanije u EU nego Japanu.
 
 
 ##2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki žanrovi značajno popularniji?
