@@ -223,3 +223,94 @@ barplot(NAProfitByGenre$PercentageOfGenreInMarket,
 
 Odokativno vidimo da su prodavaniji žanrovi Action, Shooter i Sports, te da se žanrovi Strategy,
 Adventure i Puzzle slabije prodaju.
+
+Da bi smo odgovorili na ovo pitanje u potpunosti koristiti ćemo ANOVA-u, tj. metodu s kojom testiramo sredine više populacija, 
+u našem slučaju žanrova. 
+Jedan od glavnih ciljeva analize varijance je ustanoviti jesu li upravo te razlike između grupa samo posljedica slučajnosti ili je statistički značajna.
+U našem slučaju koristimo jednofaktorsku varijantu jer smatramo da popularnost proizlazi iz prodanosti određenih žanrova.
+
+Pretpostavke ANOVA-e su:
+
+- nezavisnost pojedinih podataka u uzorcima,
+- normalna razdioba podataka,
+- homogenost varijanci među populacijama.
+
+Provjeru normalnost provjeravamo Lillieforsovom inačicom KS testa. Gdje je žanr varijabla koja određuje grupu, a prodaja je zavisna varijabla.
+
+```{r test pretpostavki - normalnost}
+
+require(nortest)
+library(dplyr)
+
+# filtered_data = data[data$NA_Sales > 0.2 & data$NA_Sales < 1, ]
+# lillie.test(filtered_data$NA_Sales)
+
+# Iz sljedećih histograma ne možemo vidjeti normalnu distribuciju
+
+hist(data$NA_Sales[data$Genre == 'Action'],main='Broj prodanih primjeraka Action žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+hist(data$NA_Sales[data$Genre == 'Adventure'],main='Broj prodanih primjeraka Adventure žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+hist(data$NA_Sales[data$Genre == 'Fighting'],main='Broj prodanih primjeraka Fighting žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+hist(data$NA_Sales[data$Genre == 'Misc'],main='Broj prodanih primjeraka Misc žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+hist(data$NA_Sales[data$Genre == 'Puzzle'],main='Broj prodanih primjeraka Puzzle žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+hist(data$NA_Sales[data$Genre == 'Racing'],main='Broj prodanih primjeraka Racing žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+hist(data$NA_Sales[data$Genre == 'Role-Playing'],main='Broj prodanih primjeraka Role-Playing žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+hist(data$NA_Sales[data$Genre == 'Shooter'],main='Broj prodanih primjeraka Shooter žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+hist(data$NA_Sales[data$Genre == 'Simulation'],main='Broj prodanih primjeraka Simulation žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+hist(data$NA_Sales[data$Genre == 'Sports'],main='Broj prodanih primjeraka Sports žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+hist(data$NA_Sales[data$Genre == 'Strategy'],main='Broj prodanih primjeraka Strategy žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+
+
+```
+```{r test pretpostavki - normalnost}
+
+# Koristeći log transformaciju približavamo podatke normalnoj distribuciji
+# Radimo novi stupac gdje ćemo imati vrijednosti prodanih primjeraka povećanih 100 puta da nemamo vrijednosti između 0 i 1, jer nam onda 
+# logaritamska transformacija ima samo pozitivne vrijednosti
+data$NA_Sales_adjusted <- data$NA_Sales * 100
+trimmedData <- data[data$NA_Sales != 0,]
+trimmedData$NA_Sales_adjusted <- trimmedData$NA_Sales * 100
+
+
+hist(log(data$NA_Sales_adjusted[data$Genre=='Action' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Action žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(log(data$NA_Sales_adjusted[data$Genre=='Adventure' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Adventure žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(log(data$NA_Sales_adjusted[data$Genre=='Fighting' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Fighting žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(log(data$NA_Sales_adjusted[data$Genre=='Misc' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Misc žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(log(data$NA_Sales_adjusted[data$Genre=='Puzzle' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Puzzle žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(log(data$NA_Sales_adjusted[data$Genre=='Racing' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Racing žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(log(data$NA_Sales_adjusted[data$Genre=='Role-Playing' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Role-Playing
+žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(log(data$NA_Sales_adjusted[data$Genre=='Shooter' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Shooter žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(log(data$NA_Sales_adjusted[data$Genre=='Simulation' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Simulation žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(log(data$NA_Sales_adjusted[data$Genre=='Sports' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Sports žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(log(data$NA_Sales_adjusted[data$Genre=='Strategy' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Strategy žanra',xlab='Value',ylab='Frequency', breaks=20)
+
+
+qqnorm(log(data$NA_Sales_adjusted[data$Genre=='Action' & data$NA_Sales_adjusted > 0]), pch = 1, frame = FALSE,main='Action')
+qqline(log(data$NA_Sales_adjusted[data$Genre=='Action' & data$NA_Sales_adjusted > 0]), col = "steelblue", lwd = 2)
+
+
+```
+
+```{r test pretpostavki - homogenost varijanci}
+
+bartlett.test(log(trimmedData$NA_Sales_adjusted) ~ trimmedData$Genre)
+
+var((data$NA_Sales[data$Genre=='Action']))
+var((data$NA_Sales[data$Genre=='Adventure']))
+var((data$NA_Sales[data$Genre=='Fighting']))
+
+# Graficki prikaz podataka
+boxplot(log(trimmedData$NA_Sales_adjusted) ~ trimmedData$Genre, cex.axis = 0.5)
+
+
+# Test
+a = aov(log(trimmedData$NA_Sales_adjusted) ~ trimmedData$Genre)
+summary(a)
+
+# Linearni model
+# model = lm(log(trimmedData$NA_Sales_adjusted) ~ trimmedData$Genre, data = trimmedData)
+# summary(model)
+# anova(model)
+
+
+```
