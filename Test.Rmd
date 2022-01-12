@@ -205,9 +205,9 @@ Zaključujemo da su FPS igre prodavanije u EU nego Japanu.
 
 ##2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki žanrovi značajno popularniji?
 
+Gledamo prvo podatke koje imamo o Sjevernoj Americi prije testa.
+Za usporedbu po žanrovima koristiti ćemo udio prodaje žanrova u Americi od ukupne prodaje u Americi.
 ```{r}
-# Gledamo prvo podatke koje imam o Sjevernoj Americi prije testa
-# Za usporedbu po žanrovima koristiti ćemo udio prodaje žanrova u Americi od ukupne prodaje u Americi.
 
 NAGenreSales = data[c(5,7)]
 NAProfitByGenre = NAGenreSales %>% group_by(Genre) %>% 
@@ -216,16 +216,15 @@ barplot(NAProfitByGenre$PercentageOfGenreInMarket,
         names.arg = NAProfitByGenre$Genre, 
         las = 2, 
         cex.names = 0.8,
-        main = "Popularnost žanrova u Americi",
-        ylab = "Udio prodaje žanra od ukupne prodaje u Sjevernoj Americi")
+        main = "Popularnost zanrova u Americi",
+        ylab = "Udio prodaje zanra od ukupne prodaje u Sjevernoj Americi")
 
 ```
 
-Odokativno vidimo da su prodavaniji žanrovi Action, Shooter i Sports, te da se žanrovi Strategy,
-Adventure i Puzzle slabije prodaju.
+Odokativno vidimo da su prodavaniji žanrovi Action, Shooter i Sports, te da se žanrovi Strategy,Adventure i Puzzle slabije prodaju, 
+tj. možemo pretpostaviti da varijance neće biti iste kod različitih žanrova.
 
-Da bi smo odgovorili na ovo pitanje u potpunosti koristiti ćemo ANOVA-u, tj. metodu s kojom testiramo sredine više populacija, 
-u našem slučaju žanrova. 
+Da bi smo odgovorili na ovo pitanje u potpunosti koristiti ćemo ANOVA test, tj. metodu s kojom testiramo sredine više populacija, u našem slučaju žanrova. 
 Jedan od glavnih ciljeva analize varijance je ustanoviti jesu li upravo te razlike između grupa samo posljedica slučajnosti ili je statistički značajna.
 U našem slučaju koristimo jednofaktorsku varijantu jer smatramo da popularnost proizlazi iz prodanosti određenih žanrova.
 
@@ -235,17 +234,15 @@ Pretpostavke ANOVA-e su:
 - normalna razdioba podataka,
 - homogenost varijanci među populacijama.
 
-Provjeru normalnost provjeravamo Lillieforsovom inačicom KS testa. Gdje je žanr varijabla koja određuje grupu, a prodaja je zavisna varijabla.
+Provjeru normalnost ćemo napraviti prikazom histograma svakog žanra. Gdje je žanr varijabla koja određuje grupu, a prodaja je zavisna varijabla.
 
 ```{r test pretpostavki - normalnost}
 
 require(nortest)
 library(dplyr)
+library(car)
 
-# filtered_data = data[data$NA_Sales > 0.2 & data$NA_Sales < 1, ]
-# lillie.test(filtered_data$NA_Sales)
-
-# Iz sljedećih histograma ne možemo vidjeti normalnu distribuciju
+# Iz sljedećih histograma vidimo da podaci nisu normalno distribuirani
 
 hist(data$NA_Sales[data$Genre == 'Action'],main='Broj prodanih primjeraka Action žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Adventure'],main='Broj prodanih primjeraka Adventure žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
@@ -261,59 +258,107 @@ hist(data$NA_Sales[data$Genre == 'Strategy'],main='Broj prodanih primjeraka Stra
 
 
 ```
-```{r test pretpostavki - normalnost}
 
-# Koristeći log transformaciju približavamo podatke normalnoj distribuciji
-# Radimo novi stupac gdje ćemo imati vrijednosti prodanih primjeraka povećanih 100 puta da nemamo vrijednosti između 0 i 1, jer nam onda 
-# logaritamska transformacija ima samo pozitivne vrijednosti
-data$NA_Sales_adjusted <- data$NA_Sales * 100
-trimmedData <- data[data$NA_Sales != 0,]
-trimmedData$NA_Sales_adjusted <- trimmedData$NA_Sales * 100
+Pošto podatci nisu u normalnoj distribuciji, koristeći log transformaciju približavamo podatke normalnoj distribuciji.
+Radimo novi stupac gdje ćemo imati vrijednosti prodanih primjeraka povećanih 100 puta da nemamo vrijednosti između 0 i 1, 
+jer nam onda logaritamska transformacija ima samo pozitivne vrijednosti
 
+```{r histogrami normalnosti}
 
-hist(log(data$NA_Sales_adjusted[data$Genre=='Action' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Action žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(log(data$NA_Sales_adjusted[data$Genre=='Adventure' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Adventure žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(log(data$NA_Sales_adjusted[data$Genre=='Fighting' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Fighting žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(log(data$NA_Sales_adjusted[data$Genre=='Misc' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Misc žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(log(data$NA_Sales_adjusted[data$Genre=='Puzzle' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Puzzle žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(log(data$NA_Sales_adjusted[data$Genre=='Racing' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Racing žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(log(data$NA_Sales_adjusted[data$Genre=='Role-Playing' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Role-Playing
-žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(log(data$NA_Sales_adjusted[data$Genre=='Shooter' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Shooter žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(log(data$NA_Sales_adjusted[data$Genre=='Simulation' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Simulation žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(log(data$NA_Sales_adjusted[data$Genre=='Sports' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Sports žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(log(data$NA_Sales_adjusted[data$Genre=='Strategy' & data$NA_Sales_adjusted > 0]),main='Broj prodanih primjeraka Strategy žanra',xlab='Value',ylab='Frequency', breaks=20)
+trimmedData <- data[data$NA_Sales != 0 & data$Year != "N/A" & data$Year != "2020",]
+trimmedData$NA_Sales_adjusted <- log(trimmedData$NA_Sales * 100)
 
 
-qqnorm(log(data$NA_Sales_adjusted[data$Genre=='Action' & data$NA_Sales_adjusted > 0]), pch = 1, frame = FALSE,main='Action')
-qqline(log(data$NA_Sales_adjusted[data$Genre=='Action' & data$NA_Sales_adjusted > 0]), col = "steelblue", lwd = 2)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'],main='Broj prodanih primjeraka Action žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'],main='Broj prodanih primjeraka Adventure žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Fighting'],main='Broj prodanih primjeraka Fighting žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Misc'],main='Broj prodanih primjeraka Misc žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Puzzle'],main='Broj prodanih primjeraka Puzzle žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Racing'],main='Broj prodanih primjeraka Racing žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Role-Playing'],main='Broj prodanih primjeraka Role-Playing žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Shooter'],main='Broj prodanih primjeraka Shooter žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Simulation'],main='Broj prodanih primjeraka Simulation žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Sports'],main='Broj prodanih primjeraka Sports žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Strategy'],main='Broj prodanih primjeraka Strategy žanra',xlab='Value',ylab='Frequency', breaks=20)
 
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'], pch = 1, frame = FALSE,main='Action')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'], pch = 1, frame = FALSE,main='Adventure')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Fighting'], pch = 1, frame = FALSE,main='Fighting')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Fighting'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Misc'], pch = 1, frame = FALSE,main='Misc')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Misc'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Puzzle'], pch = 1, frame = FALSE,main='Puzzle')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Puzzle'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Racing'], pch = 1, frame = FALSE,main='Racing')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Racing'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Role-Playing'], pch = 1, frame = FALSE,main='Role-Playing')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Role-Playing'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Shooter'], pch = 1, frame = FALSE,main='Shooter')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Shooter'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Simulation'], pch = 1, frame = FALSE,main='Simulation')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Simulation'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Sports'], pch = 1, frame = FALSE,main='Sports')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Sports'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Strategy'], pch = 1, frame = FALSE,main='Strategy')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Strategy'], col = "steelblue", lwd = 2)
 
 ```
+
+Provodimo Bartlettov test homogenosti varijanci među žanrovima i nacrtajmo box plotove transformiranih podataka.
 
 ```{r test pretpostavki - homogenost varijanci}
 
-bartlett.test(log(trimmedData$NA_Sales_adjusted) ~ trimmedData$Genre)
-
-var((data$NA_Sales[data$Genre=='Action']))
-var((data$NA_Sales[data$Genre=='Adventure']))
-var((data$NA_Sales[data$Genre=='Fighting']))
+bartlett.test(trimmedData$NA_Sales_adjusted ~ trimmedData$Genre)
 
 # Graficki prikaz podataka
-boxplot(log(trimmedData$NA_Sales_adjusted) ~ trimmedData$Genre, cex.axis = 0.5)
-
-
-# Test
-a = aov(log(trimmedData$NA_Sales_adjusted) ~ trimmedData$Genre)
-summary(a)
-
-# Linearni model
-# model = lm(log(trimmedData$NA_Sales_adjusted) ~ trimmedData$Genre, data = trimmedData)
-# summary(model)
-# anova(model)
+boxplot(trimmedData$NA_Sales_adjusted ~ trimmedData$Genre, cex.axis = 1, las=2, xlab="", ylab="Log transformirani podaci prodaje primjeraka u Americi")
 
 
 ```
+Zbog jako male p vrijednosti nam zapravo Bartlettov test sam sugerira da su im varijance različite, no provedimo ANOVA test.
+
+```{r jednofaktorska ANOVA}
+
+# ANOVA Test
+a = aov(trimmedData$NA_Sales_adjusted ~ trimmedData$Genre)
+summary(a)
+
+# Linearni model
+model = lm(trimmedData$NA_Sales_adjusted ~ trimmedData$Genre, data = trimmedData)
+summary(model)
+anova(model)
+
+```
+Nakon provedenog ANOVA testa, zbog premalog p-valuea,  zaključujemo da su varijance različite, tj neki žanrovi su značajno popularniji, kao što smo i očekivali.
+
+No što ako provjeravamo točno one žanrove koje "odokativno" vidimo da bi mogli imati istu popularnost.
+Provjerimo žanrove Strategy, Puzzle i Adventure, je li ima značajno popularnijih? (znamo da su podaci normalno distribuirani iz histograma provedenih prethodno)
+```{r}
+
+adjustedData <- data[(data$Genre == "Strategy" | data$Genre == "Puzzle" | data$Genre == "Adventure") & data$NA_Sales != 0,]
+adjustedData$NA_Sales_adjusted <- log(adjustedData$NA_Sales * 100)
+
+bartlett.test(adjustedData$NA_Sales_adjusted ~ adjustedData$Genre)
+
+# ANOVA Test
+a = aov(adjustedData$NA_Sales_adjusted ~ adjustedData$Genre)
+summary(a)
+
+```
+Nakon provedbe ANOVA testa vidimo da je p vrijednost 0.2 što znači da prihvaćamo H0 hipotezu da su varijance jednake, tj nema značajno popularnijih žanrova od odabranih.
 
 ##3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju neke videoigre?
 
