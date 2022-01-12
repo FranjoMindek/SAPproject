@@ -323,19 +323,24 @@ Kako bi znali predvidjeti prodaju neke videoigre, možemo ispitati različite va
 - Žanr
 
 
-Također, koristiti ćemo samo podatke zadnjih 5 godina u zadanim podacima (2013-2017) kako bi vidjeli modernije trendove. Podatke koji nemaju upisanu godinu cemo izbaciti.
+Također, koristiti ćemo samo podatke zadnjih 5 godina u zadanim podacima (>= 2012) kako bi vidjeli modernije trendove. Podatke koji nemaju upisanu godinu cemo izbaciti.Pošto imamo samo 4 videoigre u razdoblju (2017<=x<=2020) njih ćemo izbaciti.
 
 ```{r}
 
 PredictionData = data[c(3,4,5,6,11)]
 
-Last5YearData = PredictionData[PredictionData$Year >= 2013,]
+Last5YearData = PredictionData[PredictionData$Year >= 2012,]
+
+Last5YearData = Last5YearData[Last5YearData$Year <= 2016,]
+
+
 
 Last5YearData[Last5YearData=="N/A"] = NA 
 
 Last5YearData = Last5YearData[complete.cases(Last5YearData$Year),]
 boxplot(Global_Sales~Platform,Last5YearData)
 boxplot(Global_Sales~Genre,Last5YearData)
+
 
 ```
 
@@ -346,6 +351,7 @@ TrimmedLast5YearData = Last5YearData[Last5YearData$Global_Sales < quantile(Last5
 
 boxplot(las = 2,Global_Sales~Platform,TrimmedLast5YearData)
 boxplot(las = 2,cex.names=.5,Global_Sales~Genre,TrimmedLast5YearData)
+
 
 ```
 
@@ -361,7 +367,7 @@ lrmodel <- lm(Global_Sales ~ Genre + Platform,TrimmedLast5YearData)
 summary(lrmodel)
 
 ```
-$R^2$ od modela nam govori da je model zaslužan samo za 12% varijacije u podacima što nije pretežito velik broj ali sudeći da je bitnija kvaliteta igrice nego samo kategorizacija smatramo ga prihvatljivim.
+$R^2$ od modela nam govori da je model zaslužan samo za 11.5% varijacije u podacima što nije pretežito velik broj ali sudeći da je bitnija kvaliteta igrice nego samo kategorizacija kod prodaje smatramo ga prihvatljivim.
 
 Dodavanjem Izdavača i godinu izdavanja u regresiju pretpostavljamo da će se rezultat poboljšati. Ovdje ćemo zbog prevelikog broj koeficijenata u ispisu samo ispisat platforme i žanr. 
 
@@ -452,8 +458,9 @@ my.summary.lm = function (x, digits = max(3L, getOption("digits") - 3L),
 
 ```{r}
 
-lrmodel = lm(Global_Sales ~ Genre + Platform + Publisher + Year,TrimmedLast5YearData)
-my.summary.lm(summary(lrmodel), my.rows=1:22)
+lrmodel = lm(Global_Sales ~ Genre + Platform + Year + Publisher,TrimmedLast5YearData)
+summary(lrmodel)
+#my.summary.lm(summary(lrmodel), my.rows=1:22)
 
 ```
-S novim $R^2$ od 0.40 smatramo da imamo rezultat s kojim smo zadovoljni.
+S novim $R^2$ od 0.35 smatramo da imamo rezultat s kojim smo zadovoljni.
