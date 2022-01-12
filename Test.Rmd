@@ -314,3 +314,60 @@ summary(a)
 
 
 ```
+
+##3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju neke videoigre?
+
+Kako bi znali predvidjeti prodaju neke videoigre, možemo ispitati različite varijable koje bi mogle znatno utjecati na broj prodanih primjeraka u svijetu:
+
+- Platforma
+- Žanr
+
+
+Također, koristiti ćemo samo podatke zadnjih 5 godina u zadanim podacima (2013-2017) kako bi vidjeli modernije trendove. Podatke koji nemaju upisanu godinu cemo izbaciti.
+
+```{r}
+
+PredictionData = data[c(3,4,5,6,11)]
+
+Last5YearData = PredictionData[PredictionData$Year >= 2013,]
+
+Last5YearData[Last5YearData=="N/A"] = NA 
+
+Last5YearData = Last5YearData[complete.cases(Last5YearData$Year),]
+boxplot(Global_Sales~Platform,Last5YearData)
+boxplot(Global_Sales~Genre,Last5YearData)
+
+```
+
+Zbog outliera s vrijednostima koje previše odstupaju od box-plota izbacit cemo 5% najvecih vrijednosti kako bi graf postao čitljiviji.
+
+```{r}
+TrimmedLast5YearData = Last5YearData[Last5YearData$Global_Sales < quantile(Last5YearData$Global_Sales, 0.95),]
+
+boxplot(las = 2,Global_Sales~Platform,TrimmedLast5YearData)
+boxplot(las = 2,cex.names=.5,Global_Sales~Genre,TrimmedLast5YearData)
+
+```
+
+Iz ovih Box plot-ova možemo uvidjeti da se u modernije vrijeme najveća prodaja primjeraka događa na konsolama PS3,PS4,X360 i XOne dok je prodaja jako slaba na PSP-u i PSV-i. Od žanrova najprodavanije su Platform,Shooter i Sports dok Adventure i Puzzle poprilično sigurno drže zadnja mjesta.
+
+Zbog ovoliko velikih razlika između platformi/žanrova smatramo da odabir istih poprilično utječe na prodaju te se do neke mjere može predvidjeti.
+
+Linearnom regresijom se predviđa vrijednost varijable izlaza Y (Global_Sales) obzirom na varijable unosa X (Genre,Platform).
+
+```{r}
+
+lrmodel <- lm(Global_Sales ~ Genre + Platform,TrimmedLast5YearData)
+summary(lrmodel)
+
+```
+$R^2$ od modela nam govori da je model zaslužan samo za 12% varijacije u podacima što nije pretežito velik broj ali sudeći da je bitnija kvaliteta igrice nego samo kategorizacija smatramo ga prihvatljivim.
+
+Dodavanjem Izdavača i godinu izdavanja u regresiju pretpostavljamo da će se rezultat poboljšati.
+```{r}
+
+lrmodel = lm(Global_Sales ~ Genre + Platform + Publisher + Year,TrimmedLast5YearData)
+summary(lrmodel)
+
+```
+S novim $R^2$ od 0.40 smatramo da imamo rezultat s kojim smo zadovoljni.
