@@ -503,9 +503,9 @@ my.summary.lm = function (x, digits = max(3L, getOption("digits") - 3L),
 
 ```{r}
 
-lrmodel = lm(Global_Sales ~ Genre + Platform + Year + Publisher,TrimmedLast5YearData)
-summary(lrmodel)
-#my.summary.lm(summary(lrmodel), my.rows=1:22)
+lrmodel = lm(Global_Sales ~ Platform + Genre + Year + Publisher,TrimmedLast5YearData)
+#summary(lrmodel)
+my.summary.lm(summary(lrmodel), my.rows=1:22)
 
 ```
 S novim $R^2$ od 0.35 smatramo da imamo rezultat s kojim smo zadovoljni.
