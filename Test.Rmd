@@ -234,13 +234,17 @@ Pretpostavke ANOVA-e su:
 - normalna razdioba podataka,
 - homogenost varijanci među populacijama.
 
+Analizom varijance testiramo:
+$$ \begin{aligned}
+  H_0 & : \mu_1 = \mu_2 = \ldots = \mu_k \\
+  H_1 & : \neg H_0.
+\end{aligned} $$
+
 Provjeru normalnost ćemo napraviti prikazom histograma svakog žanra. Gdje je žanr varijabla koja određuje grupu, a prodaja je zavisna varijabla.
 
 ```{r test pretpostavki - normalnost}
 
 require(nortest)
-library(dplyr)
-library(car)
 
 # Iz sljedećih histograma vidimo da podaci nisu normalno distribuirani
 
@@ -358,7 +362,21 @@ a = aov(adjustedData$NA_Sales_adjusted ~ adjustedData$Genre)
 summary(a)
 
 ```
-Nakon provedbe ANOVA testa vidimo da je p vrijednost 0.2 što znači da prihvaćamo H0 hipotezu da su varijance jednake, tj nema značajno popularnijih žanrova od odabranih.
+Nakon provedbe ANOVA testa vidimo da je p vrijednost 0.2 što znači da prihvaćamo H0 hipotezu da su varijance jednake, tj. nema značajno popularnijih žanrova od odabranih.
+
+Idemo provjeriti i prethodno spomenute žanrove Action, Shooter i Sports.
+```{r}
+
+adjustedData <- data[(data$Genre == "Action" | data$Genre == "Shooter" | data$Genre == "Sports") & data$NA_Sales != 0,]
+adjustedData$NA_Sales_adjusted <- log(adjustedData$NA_Sales * 100)
+
+bartlett.test(adjustedData$NA_Sales_adjusted ~ adjustedData$Genre)
+
+# ANOVA Test
+a = aov(adjustedData$NA_Sales_adjusted ~ adjustedData$Genre)
+summary(a)
+
+```
 
 ##3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju neke videoigre?
 
