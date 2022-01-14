@@ -4,9 +4,8 @@ output:
   html_document: default
 ---
 
-Ovdje neki uvod i razrada null vrijednosti ako napravimo
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 data <- read.csv('./vgsales.csv')
 library(tidyverse)
 ```
