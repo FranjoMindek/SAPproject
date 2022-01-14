@@ -275,7 +275,7 @@ hist(data$NA_Sales[data$Genre == 'Strategy'],main='Broj prodanih primjeraka Stra
 
 Pošto podatci nisu u normalnoj distribuciji, koristeći log transformaciju približavamo podatke normalnoj distribuciji.
 Radimo novi stupac gdje ćemo imati vrijednosti prodanih primjeraka povećanih 100 puta da nemamo vrijednosti između 0 i 1, 
-jer nam onda logaritamska transformacija ima samo pozitivne vrijednosti
+jer će nam onda logaritamska transformacija imati samo pozitivne vrijednosti.
 
 ```{r histogrami normalnosti}
 
