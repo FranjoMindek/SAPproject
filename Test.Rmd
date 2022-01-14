@@ -6,7 +6,7 @@ output:
 
 Ovdje neki uvod i razrada null vrijednosti ako napravimo
 
-```{r}
+```{r, warning=FALSE}
 data <- read.csv('./vgsales.csv')
 library(tidyverse)
 ```
