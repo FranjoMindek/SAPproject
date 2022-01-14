@@ -377,6 +377,7 @@ a = aov(adjustedData$NA_Sales_adjusted ~ adjustedData$Genre)
 summary(a)
 
 ```
+Dolazimo do istog zaključka kao i u prethodnom testu, tj. žanrovi Action, Shooter i Sports su slične popularnosti.
 
 ##3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju neke videoigre?
 
