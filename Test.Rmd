@@ -250,6 +250,11 @@ require(nortest)
 
 hist(data$NA_Sales[data$Genre == 'Action'],main='Broj prodanih primjeraka Action žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Adventure'],main='Broj prodanih primjeraka Adventure žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+
+```
+
+
+```{r echo=FALSE}
 hist(data$NA_Sales[data$Genre == 'Fighting'],main='Broj prodanih primjeraka Fighting žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Misc'],main='Broj prodanih primjeraka Misc žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Puzzle'],main='Broj prodanih primjeraka Puzzle žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
@@ -259,7 +264,6 @@ hist(data$NA_Sales[data$Genre == 'Shooter'],main='Broj prodanih primjeraka Shoot
 hist(data$NA_Sales[data$Genre == 'Simulation'],main='Broj prodanih primjeraka Simulation žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Sports'],main='Broj prodanih primjeraka Sports žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Strategy'],main='Broj prodanih primjeraka Strategy žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
-
 
 ```
 
@@ -275,6 +279,16 @@ trimmedData$NA_Sales_adjusted <- log(trimmedData$NA_Sales * 100)
 
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'],main='Broj prodanih primjeraka Action žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'],main='Broj prodanih primjeraka Adventure žanra',xlab='Value',ylab='Frequency', breaks=20)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'], pch = 1, frame = FALSE,main='Action')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'], pch = 1, frame = FALSE,main='Adventure')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'], col = "steelblue", lwd = 2)
+
+```
+
+```{r echo=FALSE}
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Fighting'],main='Broj prodanih primjeraka Fighting žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Misc'],main='Broj prodanih primjeraka Misc žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Puzzle'],main='Broj prodanih primjeraka Puzzle žanra',xlab='Value',ylab='Frequency', breaks=20)
@@ -284,13 +298,6 @@ hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Shooter'],main='Broj prod
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Simulation'],main='Broj prodanih primjeraka Simulation žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Sports'],main='Broj prodanih primjeraka Sports žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Strategy'],main='Broj prodanih primjeraka Strategy žanra',xlab='Value',ylab='Frequency', breaks=20)
-
-
-qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'], pch = 1, frame = FALSE,main='Action')
-qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'], col = "steelblue", lwd = 2)
-
-qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'], pch = 1, frame = FALSE,main='Adventure')
-qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'], col = "steelblue", lwd = 2)
 
 qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Fighting'], pch = 1, frame = FALSE,main='Fighting')
 qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Fighting'], col = "steelblue", lwd = 2)
