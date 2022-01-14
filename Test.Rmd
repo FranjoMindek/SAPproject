@@ -11,9 +11,9 @@ data <- read.csv('./vgsales.csv')
 library(tidyverse)
 ```
 
-##1. Pitanje: Jesu li u Japanu RPG igre značajno prodavanije od FPS igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
+#1. Pitanje: Jesu li u Japanu RPG igre značajno prodavanije od FPS igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
 
-#Jesu li u Japanu RPG igre značajno prodavanije od FPS igara?
+##Jesu li u Japanu RPG igre značajno prodavanije od FPS igara?
 
 ```{r, fig.width=8}
 # Pogledajmo prvo podatke koje imam o Japanu prije same uspostave testa
@@ -66,9 +66,11 @@ JP_FPSq <- quantile(JP_FPSData$JP_Sales, probs = c(.1, .90))
 JP_RPGq <- quantile(JP_RPGData$JP_Sales, probs = c(.1, .90))
 
 JP_FPSDataTrimmed = JPGenreSales[JPGenreSales$Genre == "Shooter" 
-                              & JPGenreSales$JP_Sales >= JP_FPSq[1] & JPGenreSales$JP_Sales <= JP_FPSq[2], ]
+                              & JPGenreSales$JP_Sales >= JP_FPSq[1] 
+                              & JPGenreSales$JP_Sales <= JP_FPSq[2], ]
 JP_RPGDataTrimmed = JPGenreSales[JPGenreSales$Genre == "Role-Playing" 
-                              & JPGenreSales$JP_Sales >= JP_RPGq[1] & JPGenreSales$JP_Sales <= JP_RPGq[2], ]
+                              & JPGenreSales$JP_Sales >= JP_RPGq[1] 
+                              & JPGenreSales$JP_Sales <= JP_RPGq[2], ]
 
 bTrimmed = seq(min(JP_RPGDataTrimmed$JP_Sales) - 0.05,max(JP_RPGDataTrimmed$JP_Sales) + 0.05,0.05)
 
@@ -106,7 +108,8 @@ t.test(JP_RPGData$JP_Sales, JP_FPSData$JP_Sales,
        conf.level=0.99)
 
 qt(p=0.01, df=1301, lower.tail=FALSE)
-qt(p=0.00001, df=1301, lower.tail=FALSE) #t-vrijednost potrebna za odbacivanje na 99.999% intervalu povjerenja
+qt(p=0.00001, df=1301, lower.tail=FALSE) 
+#t-vrijednost potrebna za odbacivanje na 99.999% intervalu povjerenja
 ```
 Iz rezultata možemo zaključiti sljedeće:
 Na temelju jako male p-vrijednost znamo da je ovo jako ekstreman slučaj tj. jako je mala šansa ovakvog uzorka u slučaju H0. P-vrijednost podupire hipotezu H1.
@@ -177,7 +180,9 @@ legend("topright", fill = c("red", "green"), c("FPS prodaja u Japanu", "FPS prod
 Prikazani grafovi potvrđuju da su FPS igre popularnije u Europi nego Japanu i po broju naslova i po prodajama. No potvrdimo to t-testom. 
 
 ```{r}
-#Kako bismo dobili podatke koji bolje prikazuju popularnost unutar same regije, vrijednosti prodaje FPS igara unutar regije podijelit ćemo s prosječnim brojem prodaje igara unutar te regije
+#Kako bismo dobili podatke koji bolje prikazuju popularnost unutar same regije, 
+#vrijednosti prodaje FPS igara unutar regije podijelit ćemo s 
+#prosječnim brojem prodaje igara unutar te regije
 
 NonBisaedEUFPSData = EU_FPSData$EU_Sales / mean(data$EU_Sales)
 NonBiasedJPFPSDATA = JP_FPSData$JP_Sales / mean(data$JP_Sales)
@@ -195,7 +200,8 @@ t.test(NonBisaedEUFPSData, NonBiasedJPFPSDATA,
        conf.level=0.99)
 
 qt(p=0.0001, df=1301, lower.tail=FALSE)
-qt(p=0.00001, df=1301, lower.tail=FALSE) #t-vrijednost potrebna za odbacivanje na 99.999% intervalu povjerenja
+qt(p=0.00001, df=1301, lower.tail=FALSE) 
+#t-vrijednost potrebna za odbacivanje na 99.999% intervalu povjerenja
 ```
 Iz rezultata možemo zaključiti sljedeće:
 Na temelju jako male p-vrijednost znamo da je ovo jako ekstreman slučaj tj. jako je mala šansa ovakvog uzorka u slučaju H0. P-vrijednost podupire hipotezu H1.
@@ -203,7 +209,7 @@ Na temelju jako velike t-vrijednosti (nalazi se između intervala povjerenja 99.
 Zaključujemo da su FPS igre prodavanije u EU nego Japanu.
 
 
-##2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki žanrovi značajno popularniji?
+#2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki žanrovi značajno popularniji?
 
 Gledamo prvo podatke koje imamo o Sjevernoj Americi prije testa.
 Za usporedbu po žanrovima koristiti ćemo udio prodaje žanrova u Americi od ukupne prodaje u Americi.
@@ -389,7 +395,7 @@ summary(a)
 ```
 Dolazimo do istog zaključka kao i u prethodnom testu, tj. žanrovi Action, Shooter i Sports su slične popularnosti.
 
-##3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju neke videoigre?
+#3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju neke videoigre?
 
 Kako bi znali predvidjeti prodaju neke videoigre, možemo ispitati različite varijable koje bi mogle znatno utjecati na broj prodanih primjeraka u svijetu:
 
@@ -577,5 +583,5 @@ slice_max(coeffs_asc, order_by = coeffs_asc$value, n=10)
 Vidimo da su top 10 najvećih i najmanjih koeficijenata svi u ovisnosti od publishera. To ima smisla jer žanr, platforma i godina izdavanja igre ne govori puno o kvaliteti igre. Publisheri već imaju određenu popularnost i reputaciju te se u puno slučajeva može predvidjeti kvaliteta igre samo kroz publishera dok se to uglavnom ne može ako su u pitanju samo žanr i platforma.
 
 
-## 4. Pitanje: Zamislite da radite videoigru. Kakve karakteristike bi ta igra trebala imati ako želite da ona bude što prodavanija u određenoj regiji?
+# 4. Pitanje: Zamislite da radite videoigru. Kakve karakteristike bi ta igra trebala imati ako želite da ona bude što prodavanija u određenoj regiji?
 
