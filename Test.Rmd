@@ -391,27 +391,22 @@ Također, koristiti ćemo samo podatke zadnjih 5 godina u zadanim podacima (>= 2
 
 ```{r}
 
-PredictionData = data[c(3,4,5,6,11)]
-
-Last5YearData = PredictionData[PredictionData$Year >= 2012,]
-
+Last5YearData = data[data$Year >= 2012,]
 Last5YearData = Last5YearData[Last5YearData$Year <= 2016,]
-
-
-
-Last5YearData[Last5YearData=="N/A"] = NA 
-
-Last5YearData = Last5YearData[complete.cases(Last5YearData$Year),]
+Last5YearData = Last5YearData[complete.cases(Last5YearData),]
 boxplot(Global_Sales~Platform,Last5YearData)
 boxplot(Global_Sales~Genre,Last5YearData)
 
 
 ```
 
-Zbog outliera s vrijednostima koje previše odstupaju od box-plota izbacit cemo 5% najvecih vrijednosti kako bi graf postao čitljiviji.
+Zbog outliera s vrijednostima koje previše odstupaju od box-plota izbacit cemo 5% najvecih i najmanjih vrijednosti kako bi graf postao čitljiviji.
 
 ```{r}
-TrimmedLast5YearData = Last5YearData[Last5YearData$Global_Sales < quantile(Last5YearData$Global_Sales, 0.95),]
+TrimmedLast5YearData = Last5YearData[
+  Last5YearData$Global_Sales <= quantile(Last5YearData$Global_Sales, 0.95) &
+  Last5YearData$Global_Sales >= quantile(Last5YearData$Global_Sales, 0.05)
+,]
 
 boxplot(las = 2,Global_Sales~Platform,TrimmedLast5YearData)
 boxplot(las = 2,cex.names=.5,Global_Sales~Genre,TrimmedLast5YearData)
@@ -427,7 +422,7 @@ Linearnom regresijom se predviđa vrijednost varijable izlaza Y (Global_Sales) o
 
 ```{r}
 
-lrmodel <- lm(Global_Sales ~ Genre + Platform,TrimmedLast5YearData)
+lrmodel <- lm(Global_Sales ~ Genre + Platform, TrimmedLast5YearData)
 summary(lrmodel)
 
 ```
@@ -526,7 +521,7 @@ lrmodel = lm(Global_Sales ~ Platform + Genre + Year + Publisher,TrimmedLast5Year
 my.summary.lm(summary(lrmodel), my.rows=1:22)
 
 ```
-S novim $R^2$ od 0.35 smatramo da imamo rezultat s kojim smo zadovoljni. Još trebamo provjeriti važe li pretpostavke regresije.
+S novim $R^2$ od 0.325 smatramo da imamo rezultat s kojim smo zadovoljni. Još trebamo provjeriti važe li pretpostavke regresije.
 
 ```{r}
 hist((lrmodel$residuals))
@@ -550,7 +545,7 @@ qqline(rstandard(expmodel))
 my.summary.lm(summary(expmodel), my.rows = 1:22)
 ```
 
-Lako vidimo da smo dobili puno bolju normalnost reziduala kao i puno bolji fit podacima sa R^2 od 0.4965.
+Lako vidimo da smo dobili puno bolju normalnost reziduala kao i puno bolji fit podacima sa $R^2$ od 0.499.
 
 ```{R}
 # izvuci koeficijente u data frame
@@ -567,5 +562,145 @@ slice_max(coeffs_asc, order_by = coeffs_asc$value, n=10)
 Vidimo da su top 10 najvećih i najmanjih koeficijenata svi u ovisnosti od publishera. To ima smisla jer žanr, platforma i godina izdavanja igre ne govori puno o kvaliteti igre. Publisheri već imaju određenu popularnost i reputaciju te se u puno slučajeva može predvidjeti kvaliteta igre samo kroz publishera dok se to uglavnom ne može ako su u pitanju samo žanr i platforma.
 
 
-## 4. Pitanje: Zamislite da radite videoigru. Kakve karakteristike bi ta igra trebala imati ako želite da ona bude što prodavanija u određenoj regiji?
+# 4. Pitanje: Zamislite da radite videoigru. Kakve karakteristike bi ta igra trebala imati ako želite da ona bude što prodavanija u određenoj regiji?
 
+Po uzoru na treće pitanje sada možemo izgraditi modele koji umjesto globalnih prodaja pokušavaju predvidjeti prodaju u određenoj regiji. Za nezavisne varijable koristit ćemo samo žanr i platformu jer su to jedine koje možemo slobodno birati pri izradi naše igre. Opet koristimo logaritamsko skaliranje jer smo vidjeli da to puno bolje funkcionira.
+
+```{r}
+# ne smijemo imati 0 u prodajama u eksponencijalnom modelu (log(0) = inf) pa ih izbacujemo
+NA_data = Last5YearData[Last5YearData$NA_Sales != 0,]
+EU_data = Last5YearData[Last5YearData$EU_Sales != 0,]
+JP_data = Last5YearData[Last5YearData$JP_Sales != 0,]
+
+
+expmodel_NA = lm(log(NA_Sales) ~ Genre + Platform, NA_data)
+summary(expmodel_NA)
+qqnorm(rstandard(expmodel_NA))
+qqline(rstandard(expmodel_NA))
+
+expmodel_EU = lm(log(EU_Sales) ~ Genre + Platform, EU_data)
+summary(expmodel_EU)
+qqnorm(rstandard(expmodel_EU))
+qqline(rstandard(expmodel_EU))
+
+expmodel_JP = lm(log(JP_Sales) ~ Genre + Platform, JP_data)
+summary(expmodel_JP)
+qqnorm(rstandard(expmodel_JP))
+qqline(rstandard(expmodel_JP))
+
+```
+Kao očekivano, opet ne dobivamo neki odličan fit samo s uvjetima na žanr i platformu, ali nam model opet može nešto reći o popularnostima žanrova i platformi u određenim regijama.
+
+```{r}
+coeffs_NA = data.frame(
+  keyName=names(expmodel_NA$coefficients), 
+  value = expmodel_NA$coefficients, 
+  row.names=NULL
+)
+
+coeffs_NA_asc = coeffs_NA[order(coeffs_NA$value),]
+slice_min(coeffs_NA_asc, order_by = coeffs_NA_asc$value, n=5)
+slice_max(coeffs_NA_asc, order_by = coeffs_NA_asc$value, n=5)
+```
+
+Možemo vidjeti da ako želimo da nam igra bude što prodavanija u Sjevernoj Americi trebali bismo napravit Shooter na Wii-ju jer oni imaju najveći pozitivni utjecaj na prodaju video igre i nipošto Adventure na PSP-u koji imaju izrazito negativan utjecaj na prodaju video igre. Naravno to nam ne znači puno zbog općenitog slabog fit-a te definitivno nije temelj da možemo zasigurno reći da će takva igra biti najprodavanija.
+
+```{r}
+coeffs_EU = data.frame(
+  keyName=names(expmodel_EU$coefficients), 
+  value = expmodel_EU$coefficients, 
+  row.names=NULL
+)
+
+coeffs_EU_asc = coeffs_EU[order(coeffs_EU$value),]
+slice_min(coeffs_EU_asc, order_by = coeffs_EU_asc$value, n=5)
+slice_max(coeffs_EU_asc, order_by = coeffs_EU_asc$value, n=5)
+```
+
+Slično kao za Sjevernu Ameriku, u Europi bi najprodavanija igra trebala biti Shooter na PS4.
+
+```{r}
+coeffs_JP = data.frame(
+  keyName=names(expmodel_JP$coefficients), 
+  value = expmodel_JP$coefficients, 
+  row.names=NULL
+)
+
+coeffs_JP_asc = coeffs_JP[order(coeffs_JP$value),]
+slice_min(coeffs_JP_asc, order_by = coeffs_JP_asc$value, n=5)
+slice_max(coeffs_JP_asc, order_by = coeffs_JP_asc$value, n=5)
+```
+I u Japanu to bi bio RPG na Wii-ju.
+
+Naravno znamo intuitivno da sam žanr i platforma za našu igricu neće imati toliki utjecaj, ali postoji li mogućnost da ako smo određeni publisher i znamo podatke za vlastite igrice, bismo li onda mogli bolje predvidjeti koje naše igre ljudi žele više vidjeti?
+
+```{R}
+Last5YearData %>% group_by(Publisher) %>% summarise(
+  JP_Sales = sum(JP_Sales),
+  NA_Sales = sum(NA_Sales),
+  EU_Sales = sum(EU_Sales)
+) -> per_publisher
+per_publisher = data.frame(per_publisher)
+
+#Testove ćemo napraviti za najprodavanije publishere u regijama
+slice_max(per_publisher, order_by = per_publisher$NA_Sales, n=1) # NA - Activision
+slice_max(per_publisher, order_by = per_publisher$EU_Sales, n=1) # EU - Electronic Arts
+slice_max(per_publisher, order_by = per_publisher$JP_Sales, n=1) # JP - Nintendo
+
+nintendoData = Last5YearData[Last5YearData$Publisher == 'Nintendo' & 
+                             Last5YearData$JP_Sales != 0,]
+activisionData = Last5YearData[Last5YearData$Publisher == 'Activision' &
+                               Last5YearData$NA_Sales != 0,]
+EAData = Last5YearData[Last5YearData$Publisher == 'Electronic Arts' &
+                       Last5YearData$EU_Sales != 0, ]
+
+expmodel_activision = lm(log(NA_Sales) ~ Genre + Platform, activisionData)
+summary(expmodel_activision)
+qqnorm(rstandard(expmodel_activision))
+qqline(rstandard(expmodel_activision))
+
+expmodel_EA = lm(log(EU_Sales) ~ Genre + Platform, EAData)
+summary(expmodel_EA)
+qqnorm(rstandard(expmodel_EA))
+qqline(rstandard(expmodel_EA))
+
+expmodel_nintendo = lm(log(JP_Sales) ~ Genre + Platform, nintendoData)
+summary(expmodel_nintendo)
+qqnorm(rstandard(expmodel_nintendo))
+qqline(rstandard(expmodel_nintendo))
+
+```
+
+
+```{r}
+coeffs_nintendo = data.frame(
+  keyName=names(expmodel_nintendo$coefficients), 
+  value = expmodel_nintendo$coefficients, 
+  row.names=NULL
+)
+
+slice_max(coeffs_nintendo, order_by = coeffs_nintendo$value, n=10)
+```
+Ako smo Nintendo i bitna nam je prodaja u Japanu, glavni koeficijenti nam se uopće ne odnose na platforme, već na žanrove. Fanovi Nintenda u Japanu najviše preferiraju Racing i Simulation igre koje oni rade, a preferabilno je i da su na Nintendovim konzolama (Wii i DS).
+
+```{r}
+coeffs_EA = data.frame(
+  keyName=names(expmodel_EA$coefficients), 
+  value = expmodel_EA$coefficients, 
+  row.names=NULL
+)
+
+slice_max(coeffs_EA, order_by = coeffs_EA$value, n=10)
+```
+Ako smo Electronic Arts i bitna nam je prodaja u Europi vidimo da ljudima gotovo da nije bitno koji žanr pravimo, već je skoro samo bitno da su na Wii, PS4, PSV, i PS3 platformama.
+
+```{r}
+coeffs_activision = data.frame(
+  keyName=names(expmodel_activision$coefficients), 
+  value = expmodel_activision$coefficients, 
+  row.names=NULL
+)
+
+slice_max(coeffs_activision, order_by = coeffs_activision$value, n=10)
+```
+Ako smo Activision i bitna nam je prodaja u Sjevernoj Americi vidimo da bi trebali sigurno nastaviti raditi igrice na Wii platformi, ali naši fanovi isto tako preferiraju naše RPG i Shooter igre više od bilo kojih drugih. Te nakon tog im je bitno da budu na PS4, PS3, XOne ili X360 platformama.
