@@ -254,7 +254,7 @@ hist(data$NA_Sales[data$Genre == 'Adventure'],main='Broj prodanih primjeraka Adv
 ```
 
 
-```{r echo=FALSE}
+```{r, echo=FALSE, fig.show='hide'}
 hist(data$NA_Sales[data$Genre == 'Fighting'],main='Broj prodanih primjeraka Fighting žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Misc'],main='Broj prodanih primjeraka Misc žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Puzzle'],main='Broj prodanih primjeraka Puzzle žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
@@ -290,7 +290,7 @@ qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Racing'], col = "steelb
 
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, fig.show='hide'}
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'],main='Broj prodanih primjeraka Adventure žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Fighting'],main='Broj prodanih primjeraka Fighting žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Misc'],main='Broj prodanih primjeraka Misc žanra',xlab='Value',ylab='Frequency', breaks=20)
