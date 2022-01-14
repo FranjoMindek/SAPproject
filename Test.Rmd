@@ -11,9 +11,9 @@ data <- read.csv('./vgsales.csv')
 library(tidyverse)
 ```
 
-#1. Pitanje: Jesu li u Japanu RPG igre značajno prodavanije od FPS igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
+# 1. Pitanje: Jesu li u Japanu RPG igre značajno prodavanije od FPS igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
 
-##Jesu li u Japanu RPG igre značajno prodavanije od FPS igara?
+## Jesu li u Japanu RPG igre značajno prodavanije od FPS igara?
 
 ```{r, fig.width=8}
 # Pogledajmo prvo podatke koje imam o Japanu prije same uspostave testa
@@ -116,7 +116,7 @@ Na temelju jako male p-vrijednost znamo da je ovo jako ekstreman slučaj tj. jak
 Na temelju jako velike t-vrijednosti koja se nalazi daleko iznad kritične vrijednosti odbacivanja možemo odbaciti H0 u korist H1.
 Zaključujemo da su RPG igre prodavanije od FPS igri.
 
-#Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
+## Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
 
 Prije nego krenemo na rješavanje samog pitanja moramo razriješiti problem popularnosti.
 Kako je Europsko tržište znatno veće nego Japan moramo odabrati model koji će dobro opisati "popularnost" žanrova neovisno o populaciji potrošača. 
@@ -209,7 +209,7 @@ Na temelju jako velike t-vrijednosti (nalazi se između intervala povjerenja 99.
 Zaključujemo da su FPS igre prodavanije u EU nego Japanu.
 
 
-#2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki žanrovi značajno popularniji?
+# 2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki žanrovi značajno popularniji?
 
 Gledamo prvo podatke koje imamo o Sjevernoj Americi prije testa.
 Za usporedbu po žanrovima koristiti ćemo udio prodaje žanrova u Americi od ukupne prodaje u Americi.
@@ -395,7 +395,7 @@ summary(a)
 ```
 Dolazimo do istog zaključka kao i u prethodnom testu, tj. žanrovi Action, Shooter i Sports su slične popularnosti.
 
-#3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju neke videoigre?
+# 3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju neke videoigre?
 
 Kako bi znali predvidjeti prodaju neke videoigre, možemo ispitati različite varijable koje bi mogle znatno utjecati na broj prodanih primjeraka u svijetu:
 
