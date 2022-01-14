@@ -106,6 +106,8 @@
 
 \begin{document}
 
+Ovdje neki uvod i razrada null vrijednosti ako napravimo
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{data }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{\textquotesingle{}./vgsales.csv\textquotesingle{}}\NormalTok{)}
@@ -166,7 +168,7 @@
 ## x dplyr::lag()    masks stats::lag()
 \end{verbatim}
 
-\#\#1. Pitanje: Jesu li u Japanu RPG igre znčajno prodavanije od FPS
+\#\#1. Pitanje: Jesu li u Japanu RPG igre značajno prodavanije od FPS
 igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi
 nego u Japanu?
 
@@ -174,7 +176,7 @@ nego u Japanu?
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Pogledajmo prvo podatke koje imam o Japanu prije same uspostave test}
+\CommentTok{\# Pogledajmo prvo podatke koje imam o Japanu prije same uspostave testa}
 \CommentTok{\# Za usporedbu po žanrovima koristiti ćemo udio prodaje žanra u Japanu od ukupnih prodaja u Japanu.}
 
 \NormalTok{JPGenreSales }\OtherTok{=}\NormalTok{ data[}\FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{9}\NormalTok{)]}
@@ -196,7 +198,8 @@ nego u Japanu?
 
 Na prvi pogled izgleda kao da su RPG igre znatno dominantan žanr u
 Japanu te svakako popularnije od FPS igri. Uvjerimo se u to
-prikazivanjem podataka pomoću i drugih grafova.
+prikazivanjem podataka pomoću dodatnih grafova te zatim provjerimo
+t-testom.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -269,11 +272,68 @@ box-and-whisker graf i gotovo nevidljivi outlieri na bar grafu. Zato
 
 \includegraphics{Test_files/figure-latex/unnamed-chunk-4-2.pdf}
 
-Iz novih grafova možemo uočiti nekoliko stvari: U Japanu se izlazi puno
-više novih RPG nego FPS igri. U prosjeku RPG igre su puno prodavanije od
-FPS igri. RPG igre imaju puno više jako prodavanih outliera te su oni i
-znatno prodavaniji od FPS outliera. Možemo zaključiti da su RPG igre
-popularnije od FPS igri u Japanu.
+Iz novih grafova možemo pretpostaviti nekoliko stvari: U Japanu izlazi
+puno više novih RPG nego FPS igri. U prosjeku RPG igre se prodaju više
+od FPS igri. RPG igre imaju puno više jako uspješnih outliera te su oni
+i znatno uspješniji od FPS outliera. Potvrdimo sada pretpostavku
+popularnosti t-testom.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Postavimo t{-}test na sljedeći način:}
+\CommentTok{\#H0 {-} d = 0 {-}{-} srednje vrijednosti prodaje RPG i FPS igri su jednake}
+\CommentTok{\#H1 {-} d \textgreater{} 0 {-}{-} srednje vrijednosti prodaje RPG i FPS igri nisu jednake }
+\CommentTok{\#također koristiti ćemo alfa=0.01 da bismo dobili 99\% interval povjerenja}
+\CommentTok{\#pretpostavljamo različite varijance prodaje igri unutar žanrova}
+
+\FunctionTok{t.test}\NormalTok{(JP\_RPGData}\SpecialCharTok{$}\NormalTok{JP\_Sales, JP\_FPSData}\SpecialCharTok{$}\NormalTok{JP\_Sales, }
+       \AttributeTok{alternative=}\StringTok{"greater"}\NormalTok{,}
+       \AttributeTok{paired=}\ConstantTok{FALSE}\NormalTok{,}
+       \AttributeTok{var.equal=}\ConstantTok{FALSE}\NormalTok{,}
+       \AttributeTok{conf.level=}\FloatTok{0.99}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Welch Two Sample t-test
+## 
+## data:  JP_RPGData$JP_Sales and JP_FPSData$JP_Sales
+## t = 9.4633, df = 1301, p-value < 2.2e-16
+## alternative hypothesis: true difference in means is greater than 0
+## 99 percent confidence interval:
+##  0.176123      Inf
+## sample estimates:
+## mean of x mean of y 
+## 0.3348954 0.1012698
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qt}\NormalTok{(}\AttributeTok{p=}\FloatTok{0.01}\NormalTok{, }\AttributeTok{df=}\DecValTok{1301}\NormalTok{, }\AttributeTok{lower.tail=}\ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2.329218
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qt}\NormalTok{(}\AttributeTok{p=}\FloatTok{0.00001}\NormalTok{, }\AttributeTok{df=}\DecValTok{1301}\NormalTok{, }\AttributeTok{lower.tail=}\ConstantTok{FALSE}\NormalTok{) }\CommentTok{\#t{-}vrijednost potrebna za odbacivanje na 99.999\% intervalu povjerenja}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4.280668
+\end{verbatim}
+
+Iz rezultata možemo zaključiti sljedeće: Na temelju jako male
+p-vrijednost znamo da je ovo jako ekstreman slučaj tj. jako je mala
+šansa ovakvog uzorka u slučaju H0. P-vrijednost podupire hipotezu H1. Na
+temelju jako velike t-vrijednosti koja se nalazi daleko iznad kritične
+vrijednosti odbacivanja možemo odbaciti H0 u korist H1. Zaključujemo da
+su RPG igre prodavanije od FPS igri.
 
 \#Možete li pronaći neki žanr koji je značajno popularniji u Europi nego
 u Japanu?
@@ -281,10 +341,10 @@ u Japanu?
 Prije nego krenemo na rješavanje samog pitanja moramo razriješiti
 problem popularnosti. Kako je Europsko tržište znatno veće nego Japan
 moramo odabrati model koji će dobro opisati ``popularnost'' žanrova
-neovisno o populaciji potrošača. Model koji smo izabrali jest udio
-potrošača žanra od ukupnih potrošača regije, tj.: npr. popularnost RPG
-igara u Japanu odredit ćemo tako da broj prodaja RPG igara Japana
-podijelimo s brojem prodaje svih žanrova Japana.
+neovisno o populaciji potrošača. Model koji smo izabrali za grafički
+prikaz problema jest udio potrošača žanra od ukupnih potrošača regije.
+npr. popularnost RPG igara u Japanu odredit ćemo tako da broj prodaja
+RPG igara Japana podijelimo s brojem prodaje svih žanrova Japana.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -313,11 +373,12 @@ podijelimo s brojem prodaje svih žanrova Japana.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Test_files/figure-latex/unnamed-chunk-5-1.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-6-1.pdf}
 
-Možemo uočiti nekoliko žanrova koji su popularniji u Europi nego u
-Japanu prema izabranom modelu. To su žanrovi: Action, Racing, Shooter,
-Sports. Prikažimo dodatne grafove za žanr Shooter.
+Možemo uočiti nekoliko žanrova za koje možemo pretpostaviti da su
+popularniji u Europi nego u Japanu prema izabranom modelu. To su
+žanrovi: Action, Racing, Shooter, Sports. Prikažimo dodatne pomoćne
+grafove za žanr Shooter.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -330,12 +391,12 @@ Sports. Prikažimo dodatne grafove za žanr Shooter.
                         \SpecialCharTok{\&}\NormalTok{ EUGenreSales}\SpecialCharTok{$}\NormalTok{EU\_Sales }\SpecialCharTok{\textgreater{}=}\NormalTok{ EU\_FPSq[}\DecValTok{1}\NormalTok{] }\SpecialCharTok{\&}\NormalTok{ EUGenreSales}\SpecialCharTok{$}\NormalTok{EU\_Sales }\SpecialCharTok{\textless{}=}\NormalTok{ EU\_FPSq[}\DecValTok{2}\NormalTok{], ]}
 
 \FunctionTok{boxplot}\NormalTok{(EU\_FPSDataTrimmed}\SpecialCharTok{$}\NormalTok{EU\_Sales, JP\_FPSDataTrimmed}\SpecialCharTok{$}\NormalTok{JP\_Sales,}
-        \AttributeTok{names =} \FunctionTok{c}\NormalTok{(}\StringTok{"EU FPS sales"}\NormalTok{, }\StringTok{"Japan RPG sales"}\NormalTok{),}
+        \AttributeTok{names =} \FunctionTok{c}\NormalTok{(}\StringTok{"EU FPS sales"}\NormalTok{, }\StringTok{"Japan FPS sales"}\NormalTok{),}
         \AttributeTok{main =} \StringTok{"Prodaja FPS igri u EU i Japanu"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Test_files/figure-latex/unnamed-chunk-6-1.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-7-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -347,24 +408,88 @@ Sports. Prikažimo dodatne grafove za žanr Shooter.
 \NormalTok{JPEU\_FPSdataTrimmed }\OtherTok{\textless{}{-}} \FunctionTok{t}\NormalTok{(}\FunctionTok{cbind}\NormalTok{(h1}\SpecialCharTok{$}\NormalTok{counts, h2}\SpecialCharTok{$}\NormalTok{counts))}
 
 \FunctionTok{barplot}\NormalTok{(JPEU\_FPSdataTrimmed, }\AttributeTok{beside=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{col =} \FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"green"}\NormalTok{),}
-        \AttributeTok{main =} \StringTok{"Prodaja FPS i RPG igara u Japanu"}\NormalTok{)}
-\FunctionTok{legend}\NormalTok{(}\StringTok{"topright"}\NormalTok{, }\AttributeTok{fill =} \FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"green"}\NormalTok{), }\FunctionTok{c}\NormalTok{(}\StringTok{"FPS igre"}\NormalTok{, }\StringTok{"RPG igre"}\NormalTok{))}
+        \AttributeTok{main =} \StringTok{"Prodaja FPS igri u EU i Japanu"}\NormalTok{)}
+\FunctionTok{legend}\NormalTok{(}\StringTok{"topright"}\NormalTok{, }\AttributeTok{fill =} \FunctionTok{c}\NormalTok{(}\StringTok{"red"}\NormalTok{, }\StringTok{"green"}\NormalTok{), }\FunctionTok{c}\NormalTok{(}\StringTok{"FPS prodaja u Japanu"}\NormalTok{, }\StringTok{"FPS prodaja u EU"}\NormalTok{))}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Test_files/figure-latex/unnamed-chunk-6-2.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-7-2.pdf}
 
-Iz navedenih grafova možemo se uvjeriti da su FPS igre popularnije u
-Europi nego Japanu i po broju naslova i po prodajama.
+Prikazani grafovi potvrđuju da su FPS igre popularnije u Europi nego
+Japanu i po broju naslova i po prodajama. No potvrdimo to t-testom.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Kako bismo dobili podatke koji bolje prikazuju popularnost unutar same regije, vrijednosti prodaje FPS igara unutar regije podijelit ćemo s prosječnim brojem prodaje igara unutar te regije}
+
+\NormalTok{NonBisaedEUFPSData }\OtherTok{=}\NormalTok{ EU\_FPSData}\SpecialCharTok{$}\NormalTok{EU\_Sales }\SpecialCharTok{/} \FunctionTok{mean}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{EU\_Sales)}
+\NormalTok{NonBiasedJPFPSDATA }\OtherTok{=}\NormalTok{ JP\_FPSData}\SpecialCharTok{$}\NormalTok{JP\_Sales }\SpecialCharTok{/} \FunctionTok{mean}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{JP\_Sales)}
+
+\CommentTok{\#Postavimo t{-}test na sljedeći način:}
+\CommentTok{\#H0 {-} d = 0 {-}{-} srednje vrijednosti prodaje FPS igri unutar EU i Japana su jednake}
+\CommentTok{\#H1 {-} d \textgreater{} 0 {-}{-} srednje vrijednosti prodaje FPS igri unutar EU i Japana nisu jednake }
+\CommentTok{\#također koristiti ćemo alfa=0.01 da bismo dobili 99\% interval povjerenja}
+\CommentTok{\#pretpostavljamo različite varijance prodaje igri unutar žanrova}
+
+\FunctionTok{t.test}\NormalTok{(NonBisaedEUFPSData, NonBiasedJPFPSDATA, }
+       \AttributeTok{alternative=}\StringTok{"greater"}\NormalTok{,}
+       \AttributeTok{paired=}\ConstantTok{FALSE}\NormalTok{,}
+       \AttributeTok{var.equal=}\ConstantTok{FALSE}\NormalTok{,}
+       \AttributeTok{conf.level=}\FloatTok{0.99}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Welch Two Sample t-test
+## 
+## data:  NonBisaedEUFPSData and NonBiasedJPFPSDATA
+## t = 4.0421, df = 1208.4, p-value = 2.816e-05
+## alternative hypothesis: true difference in means is greater than 0
+## 99 percent confidence interval:
+##  0.2856255       Inf
+## sample estimates:
+## mean of x mean of y 
+##  1.976083  1.301976
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qt}\NormalTok{(}\AttributeTok{p=}\FloatTok{0.0001}\NormalTok{, }\AttributeTok{df=}\DecValTok{1301}\NormalTok{, }\AttributeTok{lower.tail=}\ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 3.729643
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qt}\NormalTok{(}\AttributeTok{p=}\FloatTok{0.00001}\NormalTok{, }\AttributeTok{df=}\DecValTok{1301}\NormalTok{, }\AttributeTok{lower.tail=}\ConstantTok{FALSE}\NormalTok{) }\CommentTok{\#t{-}vrijednost potrebna za odbacivanje na 99.999\% intervalu povjerenja}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 4.280668
+\end{verbatim}
+
+Iz rezultata možemo zaključiti sljedeće: Na temelju jako male
+p-vrijednost znamo da je ovo jako ekstreman slučaj tj. jako je mala
+šansa ovakvog uzorka u slučaju H0. P-vrijednost podupire hipotezu H1. Na
+temelju jako velike t-vrijednosti (nalazi se između intervala povjerenja
+99.99\% i 99.999\%) koja se nalazi iznad kritične vrijednosti
+odbacivanja možemo odbaciti H0 u korist H1. Zaključujemo da su FPS igre
+prodavanije u EU nego Japanu.
 
 \#\#2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki
 žanrovi značajno popularniji?
 
+Gledamo prvo podatke koje imamo o Sjevernoj Americi prije testa. Za
+usporedbu po žanrovima koristiti ćemo udio prodaje žanrova u Americi od
+ukupne prodaje u Americi.
+
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\# Gledamo prvo podatke koje imam o Sjevernoj Americi prije testa}
-\CommentTok{\# Za usporedbu po žanrovima koristiti ćemo udio prodaje žanrova u Americi od ukupne prodaje u Americi.}
-
 \NormalTok{NAGenreSales }\OtherTok{=}\NormalTok{ data[}\FunctionTok{c}\NormalTok{(}\DecValTok{5}\NormalTok{,}\DecValTok{7}\NormalTok{)]}
 \NormalTok{NAProfitByGenre }\OtherTok{=}\NormalTok{ NAGenreSales }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{group\_by}\NormalTok{(Genre) }\SpecialCharTok{\%\textgreater{}\%} 
                      \FunctionTok{summarise}\NormalTok{(}\AttributeTok{PercentageOfGenreInMarket =} \FunctionTok{sum}\NormalTok{(NA\_Sales) }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(NAGenreSales}\SpecialCharTok{$}\NormalTok{NA\_Sales))}
@@ -372,14 +497,670 @@ Europi nego Japanu i po broju naslova i po prodajama.
         \AttributeTok{names.arg =}\NormalTok{ NAProfitByGenre}\SpecialCharTok{$}\NormalTok{Genre, }
         \AttributeTok{las =} \DecValTok{2}\NormalTok{, }
         \AttributeTok{cex.names =} \FloatTok{0.8}\NormalTok{,}
-        \AttributeTok{main =} \StringTok{"Popularnost žanrova u Americi"}\NormalTok{,}
-        \AttributeTok{ylab =} \StringTok{"Udio prodaje žanra od ukupne prodaje u Sjevernoj Americi"}\NormalTok{)}
+        \AttributeTok{main =} \StringTok{"Popularnost zanrova u Americi"}\NormalTok{,}
+        \AttributeTok{ylab =} \StringTok{"Udio prodaje zanra od ukupne prodaje u Sjevernoj Americi"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Test_files/figure-latex/unnamed-chunk-7-1.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-9-1.pdf}
 
 Odokativno vidimo da su prodavaniji žanrovi Action, Shooter i Sports, te
-da se žanrovi Strategy, Adventure i Puzzle slabije prodaju.
+da se žanrovi Strategy,Adventure i Puzzle slabije prodaju, tj. možemo
+pretpostaviti da varijance neće biti iste kod različitih žanrova.
+
+Da bi smo odgovorili na ovo pitanje u potpunosti koristiti ćemo ANOVA
+test, tj. metodu s kojom testiramo sredine više populacija, u našem
+slučaju žanrova. Jedan od glavnih ciljeva analize varijance je
+ustanoviti jesu li upravo te razlike između grupa samo posljedica
+slučajnosti ili je statistički značajna. U našem slučaju koristimo
+jednofaktorsku varijantu jer smatramo da popularnost proizlazi iz
+prodanosti određenih žanrova.
+
+Pretpostavke ANOVA-e su:
+
+\begin{itemize}
+\tightlist
+\item
+  nezavisnost pojedinih podataka u uzorcima,
+\item
+  normalna razdioba podataka,
+\item
+  homogenost varijanci među populacijama.
+\end{itemize}
+
+Analizom varijance testiramo: \[ \begin{aligned}
+  H_0 & : \mu_1 = \mu_2 = \ldots = \mu_k \\
+  H_1 & : \neg H_0.
+\end{aligned} \]
+
+Provjeru normalnost ćemo napraviti prikazom histograma svakog žanra.
+Gdje je žanr varijabla koja određuje grupu, a prodaja je zavisna
+varijabla.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{require}\NormalTok{(nortest)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: nortest
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Iz sljedećih histograma vidimo da podaci nisu normalno distribuirani}
+
+\FunctionTok{hist}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{NA\_Sales[data}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{\textquotesingle{}Action\textquotesingle{}}\NormalTok{],}\AttributeTok{main=}\StringTok{\textquotesingle{}Broj prodanih primjeraka Action žanra iz ne transformiranih podataka\textquotesingle{}}\NormalTok{, }\AttributeTok{xlab=}\StringTok{\textquotesingle{}Value\textquotesingle{}}\NormalTok{,}\AttributeTok{ylab=}\StringTok{\textquotesingle{}Frequency\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/test pretpostavki - normalnost-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{hist}\NormalTok{(data}\SpecialCharTok{$}\NormalTok{NA\_Sales[data}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{\textquotesingle{}Adventure\textquotesingle{}}\NormalTok{],}\AttributeTok{main=}\StringTok{\textquotesingle{}Broj prodanih primjeraka Adventure žanra iz ne transformiranih podataka\textquotesingle{}}\NormalTok{, }\AttributeTok{xlab=}\StringTok{\textquotesingle{}Value\textquotesingle{}}\NormalTok{,}\AttributeTok{ylab=}\StringTok{\textquotesingle{}Frequency\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/test pretpostavki - normalnost-2.pdf}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-10-1.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-10-2.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-10-3.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-10-4.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-10-5.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-10-6.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-10-7.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-10-8.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-10-9.pdf}
+
+Pošto podatci nisu u normalnoj distribuciji, koristeći log
+transformaciju približavamo podatke normalnoj distribuciji. Radimo novi
+stupac gdje ćemo imati vrijednosti prodanih primjeraka povećanih 100
+puta da nemamo vrijednosti između 0 i 1, jer nam onda logaritamska
+transformacija ima samo pozitivne vrijednosti
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{trimmedData }\OtherTok{\textless{}{-}}\NormalTok{ data[data}\SpecialCharTok{$}\NormalTok{NA\_Sales }\SpecialCharTok{!=} \DecValTok{0} \SpecialCharTok{\&}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{Year }\SpecialCharTok{!=} \StringTok{"N/A"} \SpecialCharTok{\&}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{Year }\SpecialCharTok{!=} \StringTok{"2020"}\NormalTok{,]}
+\NormalTok{trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales }\SpecialCharTok{*} \DecValTok{100}\NormalTok{)}
+
+
+\FunctionTok{hist}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted[trimmedData}\SpecialCharTok{$}\NormalTok{Genre}\SpecialCharTok{==}\StringTok{\textquotesingle{}Action\textquotesingle{}}\NormalTok{],}\AttributeTok{main=}\StringTok{\textquotesingle{}Broj prodanih primjeraka Action žanra\textquotesingle{}}\NormalTok{,}\AttributeTok{xlab=}\StringTok{\textquotesingle{}Value\textquotesingle{}}\NormalTok{,}\AttributeTok{ylab=}\StringTok{\textquotesingle{}Frequency\textquotesingle{}}\NormalTok{, }\AttributeTok{breaks=}\DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/histogrami normalnosti-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{hist}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted[trimmedData}\SpecialCharTok{$}\NormalTok{Genre}\SpecialCharTok{==}\StringTok{\textquotesingle{}Racing\textquotesingle{}}\NormalTok{],}\AttributeTok{main=}\StringTok{\textquotesingle{}Broj prodanih primjeraka Racing žanra\textquotesingle{}}\NormalTok{,}\AttributeTok{xlab=}\StringTok{\textquotesingle{}Value\textquotesingle{}}\NormalTok{,}\AttributeTok{ylab=}\StringTok{\textquotesingle{}Frequency\textquotesingle{}}\NormalTok{, }\AttributeTok{breaks=}\DecValTok{20}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/histogrami normalnosti-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qqnorm}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted[trimmedData}\SpecialCharTok{$}\NormalTok{Genre}\SpecialCharTok{==}\StringTok{\textquotesingle{}Action\textquotesingle{}}\NormalTok{], }\AttributeTok{pch =} \DecValTok{1}\NormalTok{, }\AttributeTok{frame =} \ConstantTok{FALSE}\NormalTok{,}\AttributeTok{main=}\StringTok{\textquotesingle{}Action\textquotesingle{}}\NormalTok{)}
+\FunctionTok{qqline}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted[trimmedData}\SpecialCharTok{$}\NormalTok{Genre}\SpecialCharTok{==}\StringTok{\textquotesingle{}Action\textquotesingle{}}\NormalTok{], }\AttributeTok{col =} \StringTok{"steelblue"}\NormalTok{, }\AttributeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/histogrami normalnosti-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qqnorm}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted[trimmedData}\SpecialCharTok{$}\NormalTok{Genre}\SpecialCharTok{==}\StringTok{\textquotesingle{}Racing\textquotesingle{}}\NormalTok{], }\AttributeTok{pch =} \DecValTok{1}\NormalTok{, }\AttributeTok{frame =} \ConstantTok{FALSE}\NormalTok{,}\AttributeTok{main=}\StringTok{\textquotesingle{}Racing\textquotesingle{}}\NormalTok{)}
+\FunctionTok{qqline}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted[trimmedData}\SpecialCharTok{$}\NormalTok{Genre}\SpecialCharTok{==}\StringTok{\textquotesingle{}Racing\textquotesingle{}}\NormalTok{], }\AttributeTok{col =} \StringTok{"steelblue"}\NormalTok{, }\AttributeTok{lwd =} \DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/histogrami normalnosti-4.pdf}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-1.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-2.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-3.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-4.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-5.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-6.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-7.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-8.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-9.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-10.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-11.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-12.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-13.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-14.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-15.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-16.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-17.pdf}
+\includegraphics{Test_files/figure-latex/unnamed-chunk-11-18.pdf}
+
+Provodimo Bartlettov test homogenosti varijanci među žanrovima i
+nacrtajmo box plotove transformiranih podataka.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{bartlett.test}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\SpecialCharTok{\textasciitilde{}}\NormalTok{ trimmedData}\SpecialCharTok{$}\NormalTok{Genre)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Bartlett test of homogeneity of variances
+## 
+## data:  trimmedData$NA_Sales_adjusted by trimmedData$Genre
+## Bartlett's K-squared = 98.682, df = 11, p-value = 3.256e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Graficki prikaz podataka}
+\FunctionTok{boxplot}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\SpecialCharTok{\textasciitilde{}}\NormalTok{ trimmedData}\SpecialCharTok{$}\NormalTok{Genre, }\AttributeTok{cex.axis =} \DecValTok{1}\NormalTok{, }\AttributeTok{las=}\DecValTok{2}\NormalTok{, }\AttributeTok{xlab=}\StringTok{""}\NormalTok{, }\AttributeTok{ylab=}\StringTok{"Log transformirani podaci prodaje primjeraka u Americi"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/test pretpostavki - homogenost varijanci-1.pdf}
+Zbog jako male p vrijednosti nam zapravo Bartlettov test sam sugerira da
+su im varijance različite, no provedimo ANOVA test.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ANOVA Test}
+\NormalTok{a }\OtherTok{=} \FunctionTok{aov}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\SpecialCharTok{\textasciitilde{}}\NormalTok{ trimmedData}\SpecialCharTok{$}\NormalTok{Genre)}
+\FunctionTok{summary}\NormalTok{(a)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                      Df Sum Sq Mean Sq F value Pr(>F)    
+## trimmedData$Genre    11    487   44.31   26.63 <2e-16 ***
+## Residuals         11875  19761    1.66                   
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Linearni model}
+\NormalTok{model }\OtherTok{=} \FunctionTok{lm}\NormalTok{(trimmedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\SpecialCharTok{\textasciitilde{}}\NormalTok{ trimmedData}\SpecialCharTok{$}\NormalTok{Genre, }\AttributeTok{data =}\NormalTok{ trimmedData)}
+\FunctionTok{summary}\NormalTok{(model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = trimmedData$NA_Sales_adjusted ~ trimmedData$Genre, 
+##     data = trimmedData)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -2.9260 -0.8466 -0.0465  0.8406  5.5709 
+## 
+## Coefficients:
+##                               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)                    2.74295    0.02567 106.867  < 2e-16 ***
+## trimmedData$GenreAdventure    -0.51320    0.06121  -8.385  < 2e-16 ***
+## trimmedData$GenreFighting      0.09839    0.05919   1.662 0.096470 .  
+## trimmedData$GenreMisc         -0.04369    0.04540  -0.962 0.335863    
+## trimmedData$GenrePlatform      0.18309    0.05254   3.485 0.000494 ***
+## trimmedData$GenrePuzzle       -0.56455    0.06670  -8.463  < 2e-16 ***
+## trimmedData$GenreRacing       -0.19399    0.04678  -4.147 3.39e-05 ***
+## trimmedData$GenreRole-Playing -0.05737    0.05109  -1.123 0.261409    
+## trimmedData$GenreShooter       0.08503    0.04627   1.838 0.066123 .  
+## trimmedData$GenreSimulation   -0.09751    0.05843  -1.669 0.095176 .  
+## trimmedData$GenreSports        0.06391    0.03968   1.611 0.107307    
+## trimmedData$GenreStrategy     -0.66485    0.07511  -8.852  < 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.29 on 11875 degrees of freedom
+## Multiple R-squared:  0.02407,    Adjusted R-squared:  0.02317 
+## F-statistic: 26.63 on 11 and 11875 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{anova}\NormalTok{(model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Analysis of Variance Table
+## 
+## Response: trimmedData$NA_Sales_adjusted
+##                      Df  Sum Sq Mean Sq F value    Pr(>F)    
+## trimmedData$Genre    11   487.4  44.313  26.628 < 2.2e-16 ***
+## Residuals         11875 19761.5   1.664                      
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+Nakon provedenog ANOVA testa, zbog premalog p-valuea, zaključujemo da su
+varijance različite, tj neki žanrovi su značajno popularniji, kao što
+smo i očekivali.
+
+No što ako provjeravamo točno one žanrove koje ``odokativno'' vidimo da
+bi mogli imati istu popularnost. Provjerimo žanrove Strategy, Puzzle i
+Adventure, je li ima značajno popularnijih? (znamo da su podaci normalno
+distribuirani iz histograma provedenih prethodno)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{adjustedData }\OtherTok{\textless{}{-}}\NormalTok{ data[(data}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Strategy"} \SpecialCharTok{|}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Puzzle"} \SpecialCharTok{|}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Adventure"}\NormalTok{) }\SpecialCharTok{\&}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{NA\_Sales }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,]}
+\NormalTok{adjustedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(adjustedData}\SpecialCharTok{$}\NormalTok{NA\_Sales }\SpecialCharTok{*} \DecValTok{100}\NormalTok{)}
+
+\FunctionTok{bartlett.test}\NormalTok{(adjustedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\SpecialCharTok{\textasciitilde{}}\NormalTok{ adjustedData}\SpecialCharTok{$}\NormalTok{Genre)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Bartlett test of homogeneity of variances
+## 
+## data:  adjustedData$NA_Sales_adjusted by adjustedData$Genre
+## Bartlett's K-squared = 11.875, df = 2, p-value = 0.002639
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ANOVA Test}
+\NormalTok{a }\OtherTok{=} \FunctionTok{aov}\NormalTok{(adjustedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\SpecialCharTok{\textasciitilde{}}\NormalTok{ adjustedData}\SpecialCharTok{$}\NormalTok{Genre)}
+\FunctionTok{summary}\NormalTok{(a)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                      Df Sum Sq Mean Sq F value Pr(>F)
+## adjustedData$Genre    2      5   2.520    1.61    0.2
+## Residuals          1330   2082   1.565
+\end{verbatim}
+
+Nakon provedbe ANOVA testa vidimo da je p vrijednost 0.2 što znači da
+prihvaćamo H0 hipotezu da su varijance jednake, tj. nema značajno
+popularnijih žanrova od odabranih.
+
+Idemo provjeriti i prethodno spomenute žanrove Action, Shooter i Sports.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{adjustedData }\OtherTok{\textless{}{-}}\NormalTok{ data[(data}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Action"} \SpecialCharTok{|}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Shooter"} \SpecialCharTok{|}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{Genre }\SpecialCharTok{==} \StringTok{"Sports"}\NormalTok{) }\SpecialCharTok{\&}\NormalTok{ data}\SpecialCharTok{$}\NormalTok{NA\_Sales }\SpecialCharTok{!=} \DecValTok{0}\NormalTok{,]}
+\NormalTok{adjustedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\OtherTok{\textless{}{-}} \FunctionTok{log}\NormalTok{(adjustedData}\SpecialCharTok{$}\NormalTok{NA\_Sales }\SpecialCharTok{*} \DecValTok{100}\NormalTok{)}
+
+\FunctionTok{bartlett.test}\NormalTok{(adjustedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\SpecialCharTok{\textasciitilde{}}\NormalTok{ adjustedData}\SpecialCharTok{$}\NormalTok{Genre)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+##  Bartlett test of homogeneity of variances
+## 
+## data:  adjustedData$NA_Sales_adjusted by adjustedData$Genre
+## Bartlett's K-squared = 56.267, df = 2, p-value = 6.049e-13
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ANOVA Test}
+\NormalTok{a }\OtherTok{=} \FunctionTok{aov}\NormalTok{(adjustedData}\SpecialCharTok{$}\NormalTok{NA\_Sales\_adjusted }\SpecialCharTok{\textasciitilde{}}\NormalTok{ adjustedData}\SpecialCharTok{$}\NormalTok{Genre)}
+\FunctionTok{summary}\NormalTok{(a)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                      Df Sum Sq Mean Sq F value Pr(>F)
+## adjustedData$Genre    2      6   3.181   1.918  0.147
+## Residuals          5579   9251   1.658
+\end{verbatim}
+
+Dolazimo do istog zaključka kao i u prethodnom testu, tj. žanrovi
+Action, Shooter i Sports su slične popularnosti.
+
+\#\#3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju
+neke videoigre?
+
+Kako bi znali predvidjeti prodaju neke videoigre, možemo ispitati
+različite varijable koje bi mogle znatno utjecati na broj prodanih
+primjeraka u svijetu:
+
+\begin{itemize}
+\tightlist
+\item
+  Platforma
+\item
+  Žanr
+\end{itemize}
+
+Također, koristiti ćemo samo podatke zadnjih 5 godina u zadanim podacima
+(\textgreater= 2012) kako bi vidjeli modernije trendove. Podatke koji
+nemaju upisanu godinu cemo izbaciti.Pošto imamo samo 4 videoigre u
+razdoblju (2017\textless=x\textless=2020) njih ćemo izbaciti.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PredictionData }\OtherTok{=}\NormalTok{ data[}\FunctionTok{c}\NormalTok{(}\DecValTok{3}\NormalTok{,}\DecValTok{4}\NormalTok{,}\DecValTok{5}\NormalTok{,}\DecValTok{6}\NormalTok{,}\DecValTok{11}\NormalTok{)]}
+
+\NormalTok{Last5YearData }\OtherTok{=}\NormalTok{ PredictionData[PredictionData}\SpecialCharTok{$}\NormalTok{Year }\SpecialCharTok{\textgreater{}=} \DecValTok{2012}\NormalTok{,]}
+
+\NormalTok{Last5YearData }\OtherTok{=}\NormalTok{ Last5YearData[Last5YearData}\SpecialCharTok{$}\NormalTok{Year }\SpecialCharTok{\textless{}=} \DecValTok{2016}\NormalTok{,]}
+
+
+
+\NormalTok{Last5YearData[Last5YearData}\SpecialCharTok{==}\StringTok{"N/A"}\NormalTok{] }\OtherTok{=} \ConstantTok{NA} 
+
+\NormalTok{Last5YearData }\OtherTok{=}\NormalTok{ Last5YearData[}\FunctionTok{complete.cases}\NormalTok{(Last5YearData}\SpecialCharTok{$}\NormalTok{Year),]}
+\FunctionTok{boxplot}\NormalTok{(Global\_Sales}\SpecialCharTok{\textasciitilde{}}\NormalTok{Platform,Last5YearData)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{boxplot}\NormalTok{(Global\_Sales}\SpecialCharTok{\textasciitilde{}}\NormalTok{Genre,Last5YearData)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-14-2.pdf}
+
+Zbog outliera s vrijednostima koje previše odstupaju od box-plota
+izbacit cemo 5\% najvecih vrijednosti kako bi graf postao čitljiviji.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{TrimmedLast5YearData }\OtherTok{=}\NormalTok{ Last5YearData[Last5YearData}\SpecialCharTok{$}\NormalTok{Global\_Sales }\SpecialCharTok{\textless{}} \FunctionTok{quantile}\NormalTok{(Last5YearData}\SpecialCharTok{$}\NormalTok{Global\_Sales, }\FloatTok{0.95}\NormalTok{),]}
+
+\FunctionTok{boxplot}\NormalTok{(}\AttributeTok{las =} \DecValTok{2}\NormalTok{,Global\_Sales}\SpecialCharTok{\textasciitilde{}}\NormalTok{Platform,TrimmedLast5YearData)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-15-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{boxplot}\NormalTok{(}\AttributeTok{las =} \DecValTok{2}\NormalTok{,}\AttributeTok{cex.names=}\NormalTok{.}\DecValTok{5}\NormalTok{,Global\_Sales}\SpecialCharTok{\textasciitilde{}}\NormalTok{Genre,TrimmedLast5YearData)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-15-2.pdf}
+
+Iz ovih Box plot-ova možemo uvidjeti da se u modernije vrijeme najveća
+prodaja primjeraka događa na konsolama PS3,PS4,X360 i XOne dok je
+prodaja jako slaba na PSP-u i PSV-i. Od žanrova najprodavanije su
+Platform,Shooter i Sports dok Adventure i Puzzle poprilično sigurno drže
+zadnja mjesta.
+
+Zbog ovoliko velikih razlika između platformi/žanrova smatramo da odabir
+istih poprilično utječe na prodaju te se do neke mjere može predvidjeti.
+
+Linearnom regresijom se predviđa vrijednost varijable izlaza Y
+(Global\_Sales) obzirom na varijable unosa X (Genre,Platform).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lrmodel }\OtherTok{\textless{}{-}} \FunctionTok{lm}\NormalTok{(Global\_Sales }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Genre }\SpecialCharTok{+}\NormalTok{ Platform,TrimmedLast5YearData)}
+\FunctionTok{summary}\NormalTok{(lrmodel)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Global_Sales ~ Genre + Platform, data = TrimmedLast5YearData)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.62678 -0.22882 -0.09646  0.06797  1.69579 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)        0.25044    0.02224  11.260  < 2e-16 ***
+## GenreAdventure    -0.12318    0.02632  -4.681 3.01e-06 ***
+## GenreFighting     -0.03165    0.03928  -0.806 0.420552    
+## GenreMisc         -0.03996    0.03192  -1.252 0.210715    
+## GenrePlatform      0.14519    0.04504   3.224 0.001281 ** 
+## GenrePuzzle       -0.07094    0.07348  -0.965 0.334437    
+## GenreRacing        0.00804    0.03914   0.205 0.837277    
+## GenreRole-Playing  0.05377    0.02412   2.230 0.025846 *  
+## GenreShooter       0.19331    0.03132   6.171 7.83e-10 ***
+## GenreSimulation   -0.08501    0.04822  -1.763 0.078025 .  
+## GenreSports        0.06954    0.02770   2.511 0.012100 *  
+## GenreStrategy     -0.05711    0.04787  -1.193 0.233023    
+## PlatformDS        -0.08927    0.06820  -1.309 0.190701    
+## PlatformPC        -0.05388    0.03298  -1.634 0.102448    
+## PlatformPS3        0.09128    0.02705   3.375 0.000750 ***
+## PlatformPS4        0.10526    0.02996   3.513 0.000451 ***
+## PlatformPSP       -0.15645    0.03549  -4.408 1.09e-05 ***
+## PlatformPSV       -0.10016    0.02792  -3.587 0.000341 ***
+## PlatformWii        0.10574    0.05834   1.813 0.070020 .  
+## PlatformWiiU       0.07170    0.03838   1.868 0.061882 .  
+## PlatformX360       0.19303    0.03124   6.179 7.46e-10 ***
+## PlatformXOne       0.11353    0.03442   3.299 0.000985 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.378 on 2582 degrees of freedom
+## Multiple R-squared:  0.1231, Adjusted R-squared:  0.116 
+## F-statistic: 17.26 on 21 and 2582 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+\(R^2\) od modela nam govori da je model zaslužan samo za 11.5\%
+varijacije u podacima što nije pretežito velik broj, ali sudeći da je
+bitnija kvaliteta igrice nego samo kategorizacija kod prodaje smatramo
+ga prihvatljivim.
+
+Dodavanjem Izdavača i godinu izdavanja u regresiju pretpostavljamo da će
+se rezultat poboljšati. Ovdje ćemo zbog prevelikog broj koeficijenata u
+ispisu samo ispisat platforme i žanr.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lrmodel }\OtherTok{=} \FunctionTok{lm}\NormalTok{(Global\_Sales }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Platform }\SpecialCharTok{+}\NormalTok{ Genre }\SpecialCharTok{+}\NormalTok{ Year }\SpecialCharTok{+}\NormalTok{ Publisher,TrimmedLast5YearData)}
+\FunctionTok{my.summary.lm}\NormalTok{(}\FunctionTok{summary}\NormalTok{(lrmodel), }\AttributeTok{my.rows=}\DecValTok{1}\SpecialCharTok{:}\DecValTok{22}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Global_Sales ~ Platform + Genre + Year + Publisher, 
+##     data = TrimmedLast5YearData)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -0.79200 -0.17261 -0.02958  0.08276  1.55052 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)        0.15403    0.06604   2.332 0.019758 *  
+## PlatformDS        -0.10219    0.06779  -1.507 0.131841    
+## PlatformPC        -0.08570    0.03422  -2.504 0.012342 *  
+## PlatformPS3        0.12752    0.02690   4.741 2.26e-06 ***
+## PlatformPS4        0.22572    0.03121   7.232 6.38e-13 ***
+## PlatformPSP       -0.09025    0.03784  -2.385 0.017143 *  
+## PlatformPSV        0.01532    0.02887   0.531 0.595670    
+## PlatformWii        0.01962    0.05407   0.363 0.716745    
+## PlatformWiiU      -0.06006    0.03527  -1.703 0.088711 .  
+## PlatformX360       0.15224    0.03088   4.930 8.78e-07 ***
+## PlatformXOne       0.11790    0.03515   3.354 0.000808 ***
+## GenreAdventure    -0.02315    0.02883  -0.803 0.422065    
+## GenreFighting      0.05013    0.03669   1.366 0.171941    
+## GenreMisc         -0.04667    0.03049  -1.531 0.126017    
+## GenrePlatform      0.08888    0.04418   2.012 0.044366 *  
+## GenrePuzzle       -0.15241    0.07472  -2.040 0.041485 *  
+## GenreRacing        0.07438    0.04801   1.549 0.121467    
+## GenreRole-Playing  0.08845    0.02412   3.668 0.000250 ***
+## GenreShooter       0.13326    0.03100   4.298 1.79e-05 ***
+## GenreSimulation   -0.04879    0.04943  -0.987 0.323740    
+## GenreSports       -0.01423    0.03032  -0.469 0.638810    
+## GenreStrategy     -0.03178    0.04469  -0.711 0.477027    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 0.3307 on 2395 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.3771, Adjusted R-squared:  0.3246 
+## F-statistic: 7.177 on 202 and 2395 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+S novim \(R^2\) od 0.35 smatramo da imamo rezultat s kojim smo
+zadovoljni. Još trebamo provjeriti važe li pretpostavke regresije.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{hist}\NormalTok{((lrmodel}\SpecialCharTok{$}\NormalTok{residuals))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qqnorm}\NormalTok{(}\FunctionTok{rstandard}\NormalTok{(lrmodel))}
+\FunctionTok{qqline}\NormalTok{(}\FunctionTok{rstandard}\NormalTok{(lrmodel))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-19-2.pdf}
+
+Na ova dva grafa vidimo kao što smo i prije vidjeli da su podaci o
+prodajama eskponencijalno distribuirani pa odudaraju na jednom kraju
+kvantil-kvantil plota. To nam daje ideju da možemo dobiti bolji model
+predikcijom nakon što normaliziramo podatke logaritmom.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{expmodel }\OtherTok{=} \FunctionTok{lm}\NormalTok{(}\FunctionTok{log}\NormalTok{(Global\_Sales) }\SpecialCharTok{\textasciitilde{}}\NormalTok{ Platform }\SpecialCharTok{+}\NormalTok{ Genre }\SpecialCharTok{+}\NormalTok{ Year }\SpecialCharTok{+}\NormalTok{ Publisher,TrimmedLast5YearData)}
+
+\FunctionTok{hist}\NormalTok{((expmodel}\SpecialCharTok{$}\NormalTok{residuals))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-20-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qqnorm}\NormalTok{(}\FunctionTok{rstandard}\NormalTok{(expmodel))}
+\FunctionTok{qqline}\NormalTok{(}\FunctionTok{rstandard}\NormalTok{(expmodel))}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Test_files/figure-latex/unnamed-chunk-20-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{my.summary.lm}\NormalTok{(}\FunctionTok{summary}\NormalTok{(expmodel), }\AttributeTok{my.rows =} \DecValTok{1}\SpecialCharTok{:}\DecValTok{22}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = log(Global_Sales) ~ Platform + Genre + Year + Publisher, 
+##     data = TrimmedLast5YearData)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.0397 -0.6017  0.0225  0.6371  3.4409 
+## 
+## Coefficients:
+##                    Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)       -2.102067   0.201490 -10.433  < 2e-16 ***
+## PlatformDS        -0.476447   0.206844  -2.303 0.021341 *  
+## PlatformPC        -0.531619   0.104418  -5.091 3.83e-07 ***
+## PlatformPS3        0.283182   0.082076   3.450 0.000570 ***
+## PlatformPS4        0.672991   0.095231   7.067 2.07e-12 ***
+## PlatformPSP       -0.527777   0.115444  -4.572 5.08e-06 ***
+## PlatformPSV       -0.007219   0.088079  -0.082 0.934688    
+## PlatformWii       -0.076154   0.164979  -0.462 0.644413    
+## PlatformWiiU      -0.171927   0.107608  -1.598 0.110237    
+## PlatformX360       0.314255   0.094222   3.335 0.000865 ***
+## PlatformXOne       0.295497   0.107246   2.755 0.005908 ** 
+## GenreAdventure    -0.164697   0.087972  -1.872 0.061307 .  
+## GenreFighting      0.353267   0.111951   3.156 0.001622 ** 
+## GenreMisc         -0.070063   0.093030  -0.753 0.451450    
+## GenrePlatform      0.117522   0.134805   0.872 0.383407    
+## GenrePuzzle       -0.707193   0.227978  -3.102 0.001944 ** 
+## GenreRacing       -0.011275   0.146494  -0.077 0.938656    
+## GenreRole-Playing  0.404544   0.073583   5.498 4.25e-08 ***
+## GenreShooter       0.357657   0.094595   3.781 0.000160 ***
+## GenreSimulation    0.028772   0.150822   0.191 0.848721    
+## GenreSports       -0.040151   0.092505  -0.434 0.664293    
+## GenreStrategy     -0.147988   0.136348  -1.085 0.277870    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.009 on 2395 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.5356, Adjusted R-squared:  0.4965 
+## F-statistic: 13.68 on 202 and 2395 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+Lako vidimo da smo dobili puno bolju normalnost reziduala kao i puno
+bolji fit podacima sa R\^{}2 od 0.4965.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# izvuci koeficijente u data frame}
+\NormalTok{coeffs }\OtherTok{=} \FunctionTok{data.frame}\NormalTok{(}
+  \AttributeTok{keyName=}\FunctionTok{names}\NormalTok{(lrmodel}\SpecialCharTok{$}\NormalTok{coefficients), }
+  \AttributeTok{value =}\NormalTok{ lrmodel}\SpecialCharTok{$}\NormalTok{coefficients, }
+  \AttributeTok{row.names=}\ConstantTok{NULL}
+\NormalTok{)}
+
+\NormalTok{coeffs\_asc }\OtherTok{=}\NormalTok{ coeffs[}\FunctionTok{order}\NormalTok{(coeffs}\SpecialCharTok{$}\NormalTok{value),]}
+\FunctionTok{slice\_min}\NormalTok{(coeffs\_asc, }\AttributeTok{order\_by =}\NormalTok{ coeffs\_asc}\SpecialCharTok{$}\NormalTok{value, }\AttributeTok{n=}\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                                      keyName      value
+## 1                              PublisherMoss -0.4459947
+## 2                              PublisherCave -0.3661340
+## 3               PublisherTopWare Interactive -0.3311994
+## 4                PublisherFalcom Corporation -0.3151810
+## 5                          PublisherSystem 3 -0.3088876
+## 6  PublisherCloud Imperium Games Corporation -0.3040476
+## 7                          PublisherEA Games -0.2648139
+## 8        PublisherInterworks Unlimited, Inc. -0.2573205
+## 9                              PublisherYeti -0.2399038
+## 10                     PublisherMastertronic -0.2380293
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{slice\_max}\NormalTok{(coeffs\_asc, }\AttributeTok{order\_by =}\NormalTok{ coeffs\_asc}\SpecialCharTok{$}\NormalTok{value, }\AttributeTok{n=}\DecValTok{10}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                                            keyName     value
+## 1                             PublisherHello Games 1.4466005
+## 2                               Publishermixi, Inc 0.8329694
+## 3                                PublisherNintendo 0.5789624
+## 4                                     PublisherTHQ 0.5528769
+## 5                      PublisherBethesda Softworks 0.5168896
+## 6                  PublisherMicrosoft Game Studios 0.5134824
+## 7                     PublisherActivision Blizzard 0.4701940
+## 8                                  PublisherMojang 0.4665832
+## 9  PublisherWarner Bros. Interactive Entertainment 0.4346224
+## 10                        PublisherElectronic Arts 0.4168079
+\end{verbatim}
+
+Vidimo da su top 10 najvećih i najmanjih koeficijenata svi u ovisnosti
+od publishera. To ima smisla jer žanr, platforma i godina izdavanja igre
+ne govori puno o kvaliteti igre. Publisheri već imaju određenu
+popularnost i reputaciju te se u puno slučajeva može predvidjeti
+kvaliteta igre samo kroz publishera dok se to uglavnom ne može ako su u
+pitanju samo žanr i platforma.
+
+\hypertarget{pitanje-zamislite-da-radite-videoigru.-kakve-karakteristike-bi-ta-igra-trebala-imati-ako-ux17eelite-da-ona-bude-ux161to-prodavanija-u-odreux111enoj-regiji}{%
+\subsection{4. Pitanje: Zamislite da radite videoigru. Kakve
+karakteristike bi ta igra trebala imati ako želite da ona bude što
+prodavanija u određenoj
+regiji?}\label{pitanje-zamislite-da-radite-videoigru.-kakve-karakteristike-bi-ta-igra-trebala-imati-ako-ux17eelite-da-ona-bude-ux161to-prodavanija-u-odreux111enoj-regiji}}
 
 \end{document}

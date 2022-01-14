@@ -11,9 +11,9 @@ data <- read.csv('./vgsales.csv')
 library(tidyverse)
 ```
 
-##1. Pitanje: Jesu li u Japanu RPG igre značajno prodavanije od FPS igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
+#1. Pitanje: Jesu li u Japanu RPG igre značajno prodavanije od FPS igara? Možete li pronaći neki žanr koji je značajno popularniji u Europi nego u Japanu?
 
-#Jesu li u Japanu RPG igre značajno prodavanije od FPS igara?
+##Jesu li u Japanu RPG igre značajno prodavanije od FPS igara?
 
 ```{r, fig.width=8}
 # Pogledajmo prvo podatke koje imam o Japanu prije same uspostave testa
@@ -66,9 +66,11 @@ JP_FPSq <- quantile(JP_FPSData$JP_Sales, probs = c(.1, .90))
 JP_RPGq <- quantile(JP_RPGData$JP_Sales, probs = c(.1, .90))
 
 JP_FPSDataTrimmed = JPGenreSales[JPGenreSales$Genre == "Shooter" 
-                              & JPGenreSales$JP_Sales >= JP_FPSq[1] & JPGenreSales$JP_Sales <= JP_FPSq[2], ]
+                              & JPGenreSales$JP_Sales >= JP_FPSq[1] 
+                              & JPGenreSales$JP_Sales <= JP_FPSq[2], ]
 JP_RPGDataTrimmed = JPGenreSales[JPGenreSales$Genre == "Role-Playing" 
-                              & JPGenreSales$JP_Sales >= JP_RPGq[1] & JPGenreSales$JP_Sales <= JP_RPGq[2], ]
+                              & JPGenreSales$JP_Sales >= JP_RPGq[1] 
+                              & JPGenreSales$JP_Sales <= JP_RPGq[2], ]
 
 bTrimmed = seq(min(JP_RPGDataTrimmed$JP_Sales) - 0.05,max(JP_RPGDataTrimmed$JP_Sales) + 0.05,0.05)
 
@@ -106,7 +108,8 @@ t.test(JP_RPGData$JP_Sales, JP_FPSData$JP_Sales,
        conf.level=0.99)
 
 qt(p=0.01, df=1301, lower.tail=FALSE)
-qt(p=0.00001, df=1301, lower.tail=FALSE) #t-vrijednost potrebna za odbacivanje na 99.999% intervalu povjerenja
+qt(p=0.00001, df=1301, lower.tail=FALSE) 
+#t-vrijednost potrebna za odbacivanje na 99.999% intervalu povjerenja
 ```
 Iz rezultata možemo zaključiti sljedeće:
 Na temelju jako male p-vrijednost znamo da je ovo jako ekstreman slučaj tj. jako je mala šansa ovakvog uzorka u slučaju H0. P-vrijednost podupire hipotezu H1.
@@ -177,7 +180,9 @@ legend("topright", fill = c("red", "green"), c("FPS prodaja u Japanu", "FPS prod
 Prikazani grafovi potvrđuju da su FPS igre popularnije u Europi nego Japanu i po broju naslova i po prodajama. No potvrdimo to t-testom. 
 
 ```{r}
-#Kako bismo dobili podatke koji bolje prikazuju popularnost unutar same regije, vrijednosti prodaje FPS igara unutar regije podijelit ćemo s prosječnim brojem prodaje igara unutar te regije
+#Kako bismo dobili podatke koji bolje prikazuju popularnost unutar same regije, 
+#vrijednosti prodaje FPS igara unutar regije podijelit ćemo s 
+#prosječnim brojem prodaje igara unutar te regije
 
 NonBisaedEUFPSData = EU_FPSData$EU_Sales / mean(data$EU_Sales)
 NonBiasedJPFPSDATA = JP_FPSData$JP_Sales / mean(data$JP_Sales)
@@ -195,7 +200,8 @@ t.test(NonBisaedEUFPSData, NonBiasedJPFPSDATA,
        conf.level=0.99)
 
 qt(p=0.0001, df=1301, lower.tail=FALSE)
-qt(p=0.00001, df=1301, lower.tail=FALSE) #t-vrijednost potrebna za odbacivanje na 99.999% intervalu povjerenja
+qt(p=0.00001, df=1301, lower.tail=FALSE) 
+#t-vrijednost potrebna za odbacivanje na 99.999% intervalu povjerenja
 ```
 Iz rezultata možemo zaključiti sljedeće:
 Na temelju jako male p-vrijednost znamo da je ovo jako ekstreman slučaj tj. jako je mala šansa ovakvog uzorka u slučaju H0. P-vrijednost podupire hipotezu H1.
@@ -203,7 +209,7 @@ Na temelju jako velike t-vrijednosti (nalazi se između intervala povjerenja 99.
 Zaključujemo da su FPS igre prodavanije u EU nego Japanu.
 
 
-##2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki žanrovi značajno popularniji?
+#2. Pitanje: Promatrajući prodaju u Sjevernoj Americi, jesu li neki žanrovi značajno popularniji?
 
 Gledamo prvo podatke koje imamo o Sjevernoj Americi prije testa.
 Za usporedbu po žanrovima koristiti ćemo udio prodaje žanrova u Americi od ukupne prodaje u Americi.
@@ -250,6 +256,11 @@ require(nortest)
 
 hist(data$NA_Sales[data$Genre == 'Action'],main='Broj prodanih primjeraka Action žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Adventure'],main='Broj prodanih primjeraka Adventure žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
+
+```
+
+
+```{r, echo=FALSE, fig.show='hide'}
 hist(data$NA_Sales[data$Genre == 'Fighting'],main='Broj prodanih primjeraka Fighting žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Misc'],main='Broj prodanih primjeraka Misc žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Puzzle'],main='Broj prodanih primjeraka Puzzle žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
@@ -260,12 +271,11 @@ hist(data$NA_Sales[data$Genre == 'Simulation'],main='Broj prodanih primjeraka Si
 hist(data$NA_Sales[data$Genre == 'Sports'],main='Broj prodanih primjeraka Sports žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 hist(data$NA_Sales[data$Genre == 'Strategy'],main='Broj prodanih primjeraka Strategy žanra iz ne transformiranih podataka', xlab='Value',ylab='Frequency')
 
-
 ```
 
 Pošto podatci nisu u normalnoj distribuciji, koristeći log transformaciju približavamo podatke normalnoj distribuciji.
 Radimo novi stupac gdje ćemo imati vrijednosti prodanih primjeraka povećanih 100 puta da nemamo vrijednosti između 0 i 1, 
-jer nam onda logaritamska transformacija ima samo pozitivne vrijednosti
+jer će nam onda logaritamska transformacija imati samo pozitivne vrijednosti.
 
 ```{r histogrami normalnosti}
 
@@ -274,20 +284,28 @@ trimmedData$NA_Sales_adjusted <- log(trimmedData$NA_Sales * 100)
 
 
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'],main='Broj prodanih primjeraka Action žanra',xlab='Value',ylab='Frequency', breaks=20)
+hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Racing'],main='Broj prodanih primjeraka Racing žanra',xlab='Value',ylab='Frequency', breaks=20)
+
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'], pch = 1, frame = FALSE,main='Action')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'], col = "steelblue", lwd = 2)
+
+qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Racing'], pch = 1, frame = FALSE,main='Racing')
+qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Racing'], col = "steelblue", lwd = 2)
+
+
+```
+
+```{r echo=FALSE, fig.show='hide'}
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'],main='Broj prodanih primjeraka Adventure žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Fighting'],main='Broj prodanih primjeraka Fighting žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Misc'],main='Broj prodanih primjeraka Misc žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Puzzle'],main='Broj prodanih primjeraka Puzzle žanra',xlab='Value',ylab='Frequency', breaks=20)
-hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Racing'],main='Broj prodanih primjeraka Racing žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Role-Playing'],main='Broj prodanih primjeraka Role-Playing žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Shooter'],main='Broj prodanih primjeraka Shooter žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Simulation'],main='Broj prodanih primjeraka Simulation žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Sports'],main='Broj prodanih primjeraka Sports žanra',xlab='Value',ylab='Frequency', breaks=20)
 hist(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Strategy'],main='Broj prodanih primjeraka Strategy žanra',xlab='Value',ylab='Frequency', breaks=20)
-
-
-qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'], pch = 1, frame = FALSE,main='Action')
-qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Action'], col = "steelblue", lwd = 2)
 
 qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'], pch = 1, frame = FALSE,main='Adventure')
 qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Adventure'], col = "steelblue", lwd = 2)
@@ -301,8 +319,6 @@ qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Misc'], col = "steelblu
 qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Puzzle'], pch = 1, frame = FALSE,main='Puzzle')
 qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Puzzle'], col = "steelblue", lwd = 2)
 
-qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Racing'], pch = 1, frame = FALSE,main='Racing')
-qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Racing'], col = "steelblue", lwd = 2)
 
 qqnorm(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Role-Playing'], pch = 1, frame = FALSE,main='Role-Playing')
 qqline(trimmedData$NA_Sales_adjusted[trimmedData$Genre=='Role-Playing'], col = "steelblue", lwd = 2)
@@ -379,7 +395,7 @@ summary(a)
 ```
 Dolazimo do istog zaključka kao i u prethodnom testu, tj. žanrovi Action, Shooter i Sports su slične popularnosti.
 
-##3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju neke videoigre?
+#3. Pitanje: Možemo li temeljem danih varijabli predvidjeti prodaju neke videoigre?
 
 Kako bi znali predvidjeti prodaju neke videoigre, možemo ispitati različite varijable koje bi mogle znatno utjecati na broj prodanih primjeraka u svijetu:
 
